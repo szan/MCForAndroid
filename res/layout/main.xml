@@ -29,7 +29,7 @@
                 android:text="Port:"
                 android:id="@+id/textView1"/>
         <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:text="5555"
                 android:id="@+id/portAddress"/>
@@ -37,8 +37,8 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connected to:"
-            android:id="@+id/infoText" android:textColor="#35ff29" android:textSize="18dp"/>
+            android:text="Not connected"
+            android:id="@+id/infoText" android:textColor="#d6d6d6" android:textSize="18dp"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"

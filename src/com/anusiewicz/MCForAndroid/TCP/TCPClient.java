@@ -9,7 +9,6 @@ package com.anusiewicz.MCForAndroid.TCP;
  */
 import android.util.Log;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -67,9 +66,7 @@ public class TCPClient {
                             if (charsRead > 0) {
                                 Log.d("TCPClient", new String(buff).trim());
                                 String input = new String(buff).trim();
-                                synchronized (listener) {
                                     listener.onMessage(TCPClient.this, input);
-                                }
                             }
                         } catch (IOException e) {
                             Log.e("TCPClient", "IOException while reading input stream");
@@ -91,7 +88,7 @@ public class TCPClient {
             System.err.println("Couldn't get I/O for the connection");
             return false;
         } catch (Exception e) {
-            System.err.println(e.getMessage().toString());
+            System.err.println(e.getMessage());
             return false;
         }
         return true;

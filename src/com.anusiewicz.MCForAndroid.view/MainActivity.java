@@ -18,8 +18,9 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
 
     */
     private TCPClient mTCPClient;
-    EditText serverIpText, portText;
-    TextView infoText;
+    private EditText serverIpText, portText;
+    private TextView infoText;
+    private boolean isSettingConnection = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,11 +36,13 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             @Override
             public void onClick(View view) {
 
-                if (mTCPClient == null || !mTCPClient.isConnected()) {
+                if (!isSettingConnection) {
                     try
                     {
                      if(getIP().length() != 0 && getPort() != 0)
                       {
+                         infoText.setText("Trying to connect...");
+                         infoText.setTextColor(Color.YELLOW);
                          new connectTask().execute("");
                       }
                     }
@@ -56,11 +59,11 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         bDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mTCPClient != null) {
+                if (mTCPClient != null && !isSettingConnection) {
                     mTCPClient.disconnect();
                     mTCPClient = null;
-                    infoText.setText("Disconnected");
-                    infoText.setTextColor(Color.RED);
+                    infoText.setText("Not connected");
+                    infoText.setTextColor(Color.LTGRAY);
                 }
             }
         });
@@ -99,11 +102,16 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         @Override
         protected String doInBackground(String... message) {
 
+            isSettingConnection = true;
             mTCPClient = new TCPClient();
             mTCPClient.setTcpListener(MainActivity.this);
-            mTCPClient.connect(getIP(), getPort());
-
-            return mTCPClient.getRemoteHost();
+            try {
+                mTCPClient.connect(getIP(), getPort());
+                return mTCPClient.getRemoteHost();
+            } catch (Exception e) {
+                  Log.e("TCP", "Couldn't connect to remote host. " + e);
+                return null;
+            }
         }
 
         @Override
@@ -114,9 +122,10 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 infoText.setText("Connected to: " + remoteHost);
                 infoText.setTextColor(Color.GREEN);
             } else {
-                infoText.setText("Disconnected");
+                infoText.setText("Couldn't connect");
                 infoText.setTextColor(Color.RED);
             }
+             isSettingConnection = false;
         }
     }
 }
