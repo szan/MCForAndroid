@@ -4,10 +4,57 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <TextView
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_gravity="center">
+        <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="IP Adress:"
+                android:id="@+id/textView"/>
+        <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="ur5router.no-ip.biz"
+                android:id="@+id/ipAdress"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="Port:"
+                android:id="@+id/textView1"/>
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5555"
+                android:id="@+id/portAddress"/>
+    </LinearLayout>
+    <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World, MainActicity"
-            />
+            android:text="Connected to:"
+            android:id="@+id/infoText" android:textColor="#35ff29" android:textSize="18dp"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" android:weightSum="2">
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Connect"
+                android:id="@+id/buttonConnect" android:layout_gravity="center_horizontal|bottom" android:layout_weight="1"
+                android:textStyle="bold" android:textColor="#17af0a"/>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Disconnect"
+                android:id="@+id/buttonDisconnect" android:layout_gravity="center_horizontal|bottom" android:layout_weight="1"
+                android:textStyle="bold" android:textColor="#ec1800"/>
+    </LinearLayout>
 </LinearLayout>
 
