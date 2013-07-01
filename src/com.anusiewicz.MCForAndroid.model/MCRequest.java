@@ -87,9 +87,8 @@ public class MCRequest {
         }
 
         if (request.getBitValue() != null) {
-            builder.append("0");
             if (request.getBitValue().equals(Boolean.TRUE)) {
-                builder.append("01");
+                builder.append("10");
             }   else {
                 builder.append("00");
             }
