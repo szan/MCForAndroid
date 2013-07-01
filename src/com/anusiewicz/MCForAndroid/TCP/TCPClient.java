@@ -8,9 +8,12 @@ package com.anusiewicz.MCForAndroid.TCP;
  * To change this template use File | Settings | File Templates.
  */
 import android.util.Log;
+import org.apache.http.util.EncodingUtils;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class TCPClient {
 
@@ -25,6 +28,7 @@ public class TCPClient {
     private Thread listenThread = null;
     private boolean listening = false;
     private TcpMessageListener listener;
+    private DataOutputStream dos;
 
 
     public String getRemoteHost(){
@@ -54,6 +58,7 @@ public class TCPClient {
         try {
             socket = new Socket(serverIpOrHost, port);
             out = new PrintWriter(socket.getOutputStream(), true);
+            dos = new DataOutputStream(socket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.listenThread = new Thread(new Runnable() {
 
@@ -95,10 +100,19 @@ public class TCPClient {
     }
 
     public void sendMessage(String msg) {
-        if(out != null)
+        if(dos != null)
         {
-            out.println(msg);
-            out.flush();
+            byte[] b = EncodingUtils.getAsciiBytes(msg);
+            try {
+                dos.write(b);
+                Log.i("TCP", "sending" + b);
+                dos.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //out.println(msg);
+            //out.flush();
         }
     }
 
