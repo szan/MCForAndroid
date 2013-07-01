@@ -38,7 +38,7 @@
                 <EditText
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/editText"/>
+                        android:id="@+id/zadaneText"/>
             </TableRow>
             <TableRow
                     android:layout_width="fill_parent"
@@ -51,12 +51,12 @@
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/editText1"/>
+                        android:id="@+id/aktualneText"/>
                 <Button
                         android:layout_width="70dp"
                         android:layout_height="wrap_content"
                         android:text="Zeruj"
-                        android:id="@+id/button" android:layout_column="2" android:layout_marginLeft="10dp"
+                        android:id="@+id/buttonZeruj" android:layout_column="2" android:layout_marginLeft="10dp"
                         android:textStyle="bold"/>
             </TableRow>
             <TableRow
@@ -70,7 +70,7 @@
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/editText2"/>
+                        android:id="@+id/uchybText"/>
             </TableRow>
         </TableLayout>
         <TableLayout
@@ -93,16 +93,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Zmniejsz"
-                        android:id="@+id/button1"/>
+                        android:id="@+id/buttonDown"/>
                 <EditText
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/editText3"/>
+                        android:id="@+id/skokText"/>
                 <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Zwiększ"
-                        android:id="@+id/button2"/>
+                        android:id="@+id/buttonUP"/>
             </TableRow>
         </TableLayout>
         <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
