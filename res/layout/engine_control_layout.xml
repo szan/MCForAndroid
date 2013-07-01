@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
+                  android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/linearLayout">
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                      android:layout_height="wrap_content" android:layout_gravity="center">
+            <TextView android:layout_width="70dp" android:layout_height="wrap_content" android:text="IP Adress:"
+                      android:id="@+id/textView"/>
+            <EditText android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="ur5router.no-ip.biz" android:id="@+id/ipAdress"/>
+            <EditText android:layout_width="70dp" android:layout_height="wrap_content" android:text="5555"
+                      android:id="@+id/portAddress" android:layout_gravity="center"/>
+        </LinearLayout>
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Not connected"
+                  android:id="@+id/infoText" android:textColor="#d6d6d6" android:textSize="18dp"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Układ regulacji położenia"
+                android:id="@+id/textView4" android:textSize="25dp" android:paddingTop="10dp"
+                android:paddingBottom="10dp"/>
+        <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poł. zadane:"
+                        android:id="@+id/textView1"/>
+                <EditText
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Poł. aktualne:"
+                        android:id="@+id/textView2"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText1"/>
+                <Button
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="Zeruj"
+                        android:id="@+id/button" android:layout_column="2" android:layout_marginLeft="10dp"
+                        android:textStyle="bold"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Uchyb:"
+                        android:id="@+id/textView3"/>
+                <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText2"/>
+            </TableRow>
+        </TableLayout>
+        <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:paddingTop="20dp"
+                android:gravity="center_horizontal" android:layout_gravity="center_horizontal">
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Skok położenia"
+                        android:id="@+id/textView6" android:layout_column="1"/>
+            </TableRow>
+            <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+                <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Zmniejsz"
+                        android:id="@+id/button1"/>
+                <EditText
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/editText3"/>
+                <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Zwiększ"
+                        android:id="@+id/button2"/>
+            </TableRow>
+        </TableLayout>
+        <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
+                      android:layout_height="fill_parent" android:weightSum="2">
+            <Button android:layout_width="0dp" android:layout_height="wrap_content" android:text="Connect"
+                    android:id="@+id/buttonConnect" android:layout_gravity="center_horizontal|bottom"
+                    android:layout_weight="1" android:textStyle="bold" android:textColor="#17af0a"/>
+            <Button android:layout_width="0dp" android:layout_height="wrap_content" android:text="Disconnect"
+                    android:id="@+id/buttonDisconnect" android:layout_gravity="center_horizontal|bottom"
+                    android:layout_weight="1" android:textStyle="bold" android:textColor="#ec1800"/>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
