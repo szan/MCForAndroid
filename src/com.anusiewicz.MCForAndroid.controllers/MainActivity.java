@@ -153,13 +153,12 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 if (wordValueText.isEnabled()) {
 
                     try {
-                        devNum = new Integer(wordValueText.getText().toString());
+                        wordNum = new Integer(wordValueText.getText().toString());
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                         Toast.makeText(MainActivity.this,"Insert value to write",Toast.LENGTH_SHORT).show(); ;
                         return;
                     }
-                    wordNum = new Integer(wordValueText.getText().toString());
                 }
 
                 Boolean bit = null;
