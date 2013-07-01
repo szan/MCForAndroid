@@ -138,9 +138,27 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             public void onClick(View view) {
 
 
-                Integer devNum = new Integer(deviceNumberText.getText().toString());
+                Integer devNum = null;
+                if (deviceNumberText.isEnabled()) {
+                    try {
+                        devNum = new Integer(deviceNumberText.getText().toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this,"Insert device number",Toast.LENGTH_SHORT).show(); ;
+                        return;
+                    }
+                }
+
                 Integer wordNum = null;
                 if (wordValueText.isEnabled()) {
+
+                    try {
+                        devNum = new Integer(wordValueText.getText().toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this,"Insert value to write",Toast.LENGTH_SHORT).show(); ;
+                        return;
+                    }
                     wordNum = new Integer(wordValueText.getText().toString());
                 }
 
@@ -161,7 +179,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                     commandText.setText(command);
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
-                    Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT) ;
+                    Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
