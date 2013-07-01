@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     private TextView infoText;
     private CheckBox checkBox;
     private boolean isSettingConnection = false;
-    private boolean isConnected;
+    private boolean isConnected, isReadyToSend;
     private Spinner commandSpinner,deviceSpinner;
 
     @Override
@@ -123,10 +123,11 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         bSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isConnected){
+                if (isConnected && isReadyToSend){
 
                     String msg = commandText.getText().toString();
                     mTCPClient.sendMessage(msg);
+                    isReadyToSend = false;
                 }
             }
         });
@@ -192,7 +193,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     @Override
     public void onMessage(TCPClient client, String message) {
         Log.i("TCP","ON MESSAGE ____________________________" + message);
-
+        isReadyToSend =true;
 
     }
 
@@ -221,6 +222,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 infoText.setText("Connected to: " + remoteHost);
                 infoText.setTextColor(Color.GREEN);
                 isConnected = true;
+                isReadyToSend = true;
             } else {
                 infoText.setText("Couldn't connect");
                 infoText.setTextColor(Color.RED);
