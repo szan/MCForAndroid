@@ -6,11 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.model.MCRequest;
 
 public class MainActivity extends Activity implements TCPClient.TcpMessageListener {
     /**
@@ -18,9 +17,12 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
 
     */
     private TCPClient mTCPClient;
-    private EditText serverIpText, portText;
+    private EditText serverIpText, portText, commandText, responseText, deviceNumberText,wordValueText;
     private TextView infoText;
+    private CheckBox checkBox;
     private boolean isSettingConnection = false;
+    private boolean isConnected;
+    private Spinner commandSpinner,deviceSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,50 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         serverIpText = (EditText) findViewById(R.id.ipAdress);
         portText = (EditText) findViewById(R.id.portAddress);
         infoText = (TextView) findViewById(R.id.infoText);
+        commandText = (EditText) findViewById(R.id.editCommand);
+        responseText = (EditText) findViewById(R.id.editResponse);
+        deviceNumberText = (EditText) findViewById(R.id.deviceNumText);
+        wordValueText = (EditText) findViewById(R.id.wordValueText);
+        commandSpinner = (Spinner) findViewById(R.id.commandSpinner);
+        deviceSpinner = (Spinner) findViewById(R.id.deviceSpinner);
+        checkBox = (CheckBox) findViewById(R.id.checkBox);
+
+        commandSpinner.setAdapter(new ArrayAdapter<MCRequest.MCCommand>(this, android.R.layout.simple_spinner_item, MCRequest.MCCommand.values()));
+        commandSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.PLC_RUN) || commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.PLC_STOP)) {
+                    deviceSpinner.setEnabled(false);
+                    deviceNumberText.setEnabled(false);
+                    wordValueText.setEnabled(false);
+                    checkBox.setEnabled(false);
+                }  else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.READ_BIT) || commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.READ_WORD)) {
+                    deviceSpinner.setEnabled(true);
+                    deviceNumberText.setEnabled(true);
+                    wordValueText.setEnabled(false);
+                    checkBox.setEnabled(false);
+                }  else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.WRITE_BIT)) {
+                    deviceSpinner.setEnabled(true);
+                    deviceNumberText.setEnabled(true);
+                    wordValueText.setEnabled(false);
+                    checkBox.setEnabled(true);
+                }   else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.WRITE_WORD)) {
+                    deviceSpinner.setEnabled(true);
+                    deviceNumberText.setEnabled(true);
+                    wordValueText.setEnabled(true);
+                    checkBox.setEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                commandSpinner.setSelection(0);
+            }
+        }
+        );
+        deviceSpinner.setAdapter(new ArrayAdapter<MCRequest.MCDeviceCode>(this, android.R.layout.simple_spinner_item, MCRequest.MCDeviceCode.values()));
 
         Button bConnect = (Button) findViewById(R.id.buttonConnect);
         bConnect.setOnClickListener(new View.OnClickListener() {
@@ -41,6 +87,10 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                     {
                      if(getIP().length() != 0 && getPort() != 0)
                       {
+                          if (isConnected) {
+                              mTCPClient.disconnect();
+                              mTCPClient = null;
+                          }
                          infoText.setText("Trying to connect...");
                          infoText.setTextColor(Color.YELLOW);
                          new connectTask().execute("");
@@ -64,10 +114,56 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                     mTCPClient = null;
                     infoText.setText("Not connected");
                     infoText.setTextColor(Color.LTGRAY);
+                    isConnected = false;
                 }
             }
         });
 
+        Button bSend = (Button) findViewById(R.id.buttonSend);
+        bSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isConnected){
+
+                    String msg = commandText.getText().toString();
+                    mTCPClient.sendMessage(msg);
+                }
+            }
+        });
+
+        Button bGenerate = (Button) findViewById(R.id.buttonGenerate);
+        bGenerate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                Integer devNum = new Integer(deviceNumberText.getText().toString());
+                Integer wordNum = null;
+                if (wordValueText.isEnabled()) {
+                    wordNum = new Integer(wordValueText.getText().toString());
+                }
+
+                Boolean bit = null;
+
+                if (checkBox.isEnabled()) {
+                    bit = checkBox.isChecked();
+                }
+
+                try {
+                    String command =
+                            MCRequest.generateStringFromRequest(new MCRequest((MCRequest.MCCommand)commandSpinner.getSelectedItem(),
+                                    (MCRequest.MCDeviceCode)deviceSpinner.getSelectedItem(),
+                                    devNum,
+                                    wordNum,
+                                    bit));
+
+                    commandText.setText(command);
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT) ;
+                }
+            }
+        });
     }
 
     @Override
@@ -78,6 +174,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         if (mTCPClient != null) {
             mTCPClient.disconnect();
             mTCPClient = null;
+            isConnected = false;
         }
 
     }
@@ -87,14 +184,16 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     }
 
     private int getPort() {
-        Log.i("getPort",portText.getText().toString() );
+        Log.i("getPort", portText.getText().toString());
         return Integer.parseInt(portText.getText().toString());
     }
 
 
     @Override
     public void onMessage(TCPClient client, String message) {
-        //TODO
+        Log.i("TCP","ON MESSAGE ____________________________" + message);
+
+
     }
 
     public class connectTask extends AsyncTask<String,String,String> {
@@ -121,9 +220,11 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             if (remoteHost != null) {
                 infoText.setText("Connected to: " + remoteHost);
                 infoText.setTextColor(Color.GREEN);
+                isConnected = true;
             } else {
                 infoText.setText("Couldn't connect");
                 infoText.setTextColor(Color.RED);
+                isConnected = false;
             }
              isSettingConnection = false;
         }

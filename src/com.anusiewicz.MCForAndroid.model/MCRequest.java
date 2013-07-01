@@ -35,10 +35,13 @@ public class MCRequest {
         }  else {
 
             this.deviceType = deviceType;
-            if (deviceNumber != null && deviceNumber >=0 && deviceNumber <=deviceType.getDeviceRange()) {
+
+            if (deviceNumber == null) {
+                this.deviceNumber = null;
+            } else
+            if (deviceNumber >=0 && deviceNumber <=deviceType.getDeviceRange()) {
                 this.deviceNumber = deviceNumber;
             }    else {
-                this.deviceNumber = null;
                 throw new IndexOutOfBoundsException("Choose " + deviceType + " devices from 0 to " + deviceType.getDeviceRange());
             }
 
