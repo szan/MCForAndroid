@@ -1,4 +1,4 @@
-package com.anusiewicz.MCForAndroid.view;
+package com.anusiewicz.MCForAndroid.controllers;
 
 import android.app.Activity;
 import android.graphics.Color;
