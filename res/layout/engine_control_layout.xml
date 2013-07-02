@@ -38,7 +38,13 @@
                 <EditText
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/zadaneText"/>
+                        android:id="@+id/zadaneText" android:numeric="signed" android:text="0"/>
+                <Button
+                        android:layout_width="70dp"
+                        android:layout_height="wrap_content"
+                        android:text="Zeruj"
+                        android:id="@+id/buttonReset" android:layout_column="2" android:layout_marginLeft="10dp"
+                        android:textStyle="bold"/>
             </TableRow>
             <TableRow
                     android:layout_width="fill_parent"
@@ -51,12 +57,9 @@
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/aktualneText"/>
-                <Button
-                        android:layout_width="70dp"
-                        android:layout_height="wrap_content"
-                        android:text="Zeruj"
-                        android:id="@+id/buttonZeruj" android:layout_column="2" android:layout_marginLeft="10dp"
+                        android:id="@+id/aktualneText" android:numeric="signed" android:text="0"/>
+                <Button android:layout_width="90dp" android:layout_height="wrap_content" android:text="Odśwież"
+                        android:id="@+id/buttonRefresh" android:layout_column="2" android:layout_marginLeft="10dp"
                         android:textStyle="bold"/>
             </TableRow>
             <TableRow
@@ -70,7 +73,7 @@
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/uchybText"/>
+                        android:id="@+id/uchybText" android:numeric="signed" android:text="0"/>
             </TableRow>
         </TableLayout>
         <TableLayout
@@ -97,7 +100,7 @@
                 <EditText
                         android:layout_width="120dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/skokText"/>
+                        android:id="@+id/skokText" android:inputType="number" android:numeric="integer"/>
                 <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -28,7 +28,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.engine_control_layout);
 
         serverIpText = (EditText) findViewById(R.id.ipAdress);
         portText = (EditText) findViewById(R.id.portAddress);
@@ -41,6 +41,95 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         zadaneText.setEnabled(false);
         aktualneText.setEnabled(false);
         uchybText.setEnabled(false);
+
+        Button bReset = (Button) findViewById(R.id.buttonReset);
+        bReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isConnected &&isReadyToSend) {
+
+
+                        resetValues();
+
+                }
+
+
+            }
+        });
+
+        Button bRefresh = (Button) findViewById(R.id.buttonRefresh);
+        bRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isConnected && isReadyToSend) {
+
+                    MCRequest request = new MCRequest(MCRequest.MCCommand.READ_WORD, MCRequest.MCDeviceCode.D, 202);
+                    String msg = MCRequest.generateStringFromRequest(request);
+                    //mTCPClient.sendMessage(msg);
+
+                    uchybText.setText();
+
+                }
+
+
+            }
+        });
+
+        Button bUp = (Button) findViewById(R.id.buttonUP);
+        bUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //if (isConnected &&isReadyToSend) {
+                Integer value = null;
+                try {
+                    value = Integer.parseInt(aktualneText.getText().toString()) + Integer.parseInt(skokText.getText().toString());
+                } catch (NumberFormatException e) {
+
+                    e.printStackTrace();
+                    Toast.makeText(EngineControlActivity.this,"Wpisz skok położenia",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
+                String msg = MCRequest.generateStringFromRequest(request);
+                //mTCPClient.sendMessage(msg);
+                zadaneText.setText(value.toString());
+                //}
+
+
+            }
+        });
+
+        Button bDown = (Button) findViewById(R.id.buttonDown);
+        bDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isConnected &&isReadyToSend) {
+
+                    //if (isConnected &&isReadyToSend) {
+                    Integer value = null;
+                    try {
+                        value = Integer.parseInt(aktualneText.getText().toString()) - Integer.parseInt(skokText.getText().toString());
+                    } catch (NumberFormatException e) {
+
+                        e.printStackTrace();
+                        Toast.makeText(EngineControlActivity.this,"Wpisz skok położenia",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
+                    String msg = MCRequest.generateStringFromRequest(request);
+                    //mTCPClient.sendMessage(msg);
+                    // }
+                    zadaneText.setText(value.toString());
+
+                }
+
+
+            }
+        });
 
         Button bConnect = (Button) findViewById(R.id.buttonConnect);
         bConnect.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +196,13 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         return Integer.parseInt(portText.getText().toString());
     }
 
+    private void resetValues() {
+
+        zadaneText.setText("0");
+        aktualneText.setText("0");
+        uchybText.setText("0");
+
+    }
 
     @Override
     public void onMessage(TCPClient client, String message) {
