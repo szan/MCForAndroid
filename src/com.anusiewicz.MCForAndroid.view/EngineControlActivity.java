@@ -23,7 +23,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
     private EditText serverIpText, portText, zadaneText, aktualneText, uchybText, skokText;
     private TextView infoText;
     private boolean isSettingConnection = false;
-    private boolean isConnected, isReadyToSend;
+    private boolean isConnected, isReadyToSend, isReseting, isUpdatng;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +92,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
                 MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
                 String msg = MCRequest.generateStringFromRequest(request);
                 mTCPClient.sendMessage(msg);
+                //isUpdatng = true;
                 isReadyToSend = false;
                 zadaneText.setText(value.toString());
                 }
@@ -117,6 +118,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
                 MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
                 String msg = MCRequest.generateStringFromRequest(request);
                 mTCPClient.sendMessage(msg);
+                //isUpdatng = true;
                 isReadyToSend = false;
                 zadaneText.setText(value.toString());
                 }
@@ -189,25 +191,18 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
 
     private void resetValues() {
 
-        StringBuilder builder = new StringBuilder(50);
-        builder.append(MCRequest.MCCommand.WRITE_WORD.getCommandCode())
-                .append("FF0000")
-                .append(MCRequest.MCDeviceCode.D.getDeviceCode());
+        isReseting = true;
 
-            String devNum = Integer.toHexString(200);
+        MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_BIT, MCRequest.MCDeviceCode.M, 20, null, true);
+        String msg = MCRequest.generateStringFromRequest(request);
+        mTCPClient.sendMessage(msg);
 
-            for ( int i = 1; i<= 8-devNum.length(); i++ ) {
-                builder.append("0");
-            }
-            builder.append(devNum)
-                    .append("0300")
-                    .append("000000000000");
+        isReadyToSend = false;
 
         zadaneText.setText("0");
         aktualneText.setText("0");
         uchybText.setText("0");
 
-        mTCPClient.sendMessage(builder.toString());
         isReadyToSend = false;
 
     }
@@ -217,6 +212,15 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         isReadyToSend =true;
 
+        if (message.startsWith("8200") && isReseting) {
+
+        isReseting = false;
+        MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_BIT, MCRequest.MCDeviceCode.M, 20, null, false);
+        String msg = MCRequest.generateStringFromRequest(request);
+        mTCPClient.sendMessage(msg);
+        isReadyToSend = false;
+        return;
+        }
         Integer value;
         if (message.startsWith("8100")) {
 
@@ -224,15 +228,29 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         }  else {
             return;
         }
-        final int finalValue = value;
-
-        EngineControlActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+        /*
+        if (value !=null && value.equals(Integer.getInteger(aktualneText.getText().toString()))) {
+            isUpdatng =false;
+            return;
+        }
+        if (isUpdatng) {
+            MCRequest request = new MCRequest(MCRequest.MCCommand.READ_WORD, MCRequest.MCDeviceCode.D, 202);
+            String msg = MCRequest.generateStringFromRequest(request);
+            mTCPClient.sendMessage(msg);
+            isReadyToSend = false;
+        }
+        */
+        if (value!=null) {
+            final int finalValue = value;
+            EngineControlActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                 aktualneText.setText(finalValue + "");
                 uchybText.setText(Integer.parseInt(zadaneText.getText().toString()) - finalValue + "");
-            }
-        });
+                }
+            });
+        }
+
 
     }
 
