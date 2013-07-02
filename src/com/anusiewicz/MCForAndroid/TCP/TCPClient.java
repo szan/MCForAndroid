@@ -17,9 +17,13 @@ import java.util.Arrays;
 
 public class TCPClient {
 
+    public TCPClient(TcpMessageListener listener) {
+        this.listener = listener;
+    }
+
     public interface TcpMessageListener{
 
-        public void onMessage(TCPClient client, String message);
+        public void onMessage(String message);
     }
 
     private Socket socket = null;
@@ -43,17 +47,6 @@ public class TCPClient {
         return socket.isConnected();
     }
 
-
-    public void setTcpListener(TcpMessageListener listener)
-    {
-            this.listener = listener;
-    }
-
-    public void removeTcpListener(TcpMessageListener listener)
-    {
-            this.listener = null;
-    }
-
     public boolean connect(String serverIpOrHost, int port) {
         try {
             socket = new Socket(serverIpOrHost, port);
@@ -71,7 +64,7 @@ public class TCPClient {
                             if (charsRead > 0) {
                                 Log.d("TCPClient", new String(buff).trim());
                                 String input = new String(buff).trim();
-                                    listener.onMessage(TCPClient.this, input);
+                                    listener.onMessage(input);
                             }
                         } catch (IOException e) {
                             Log.e("TCPClient", "IOException while reading input stream");
