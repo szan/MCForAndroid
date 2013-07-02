@@ -144,7 +144,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                         devNum = new Integer(deviceNumberText.getText().toString());
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        Toast.makeText(MainActivity.this,"Insert device number",Toast.LENGTH_SHORT).show(); ;
+                        Toast.makeText(MainActivity.this,"Insert device number",Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
@@ -156,7 +156,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                         devNum = new Integer(wordValueText.getText().toString());
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
-                        Toast.makeText(MainActivity.this,"Insert value to write",Toast.LENGTH_SHORT).show(); ;
+                        Toast.makeText(MainActivity.this,"Insert value to write",Toast.LENGTH_SHORT).show();
                         return;
                     }
                     wordNum = new Integer(wordValueText.getText().toString());
@@ -208,11 +208,18 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         return Integer.parseInt(portText.getText().toString());
     }
 
-
     @Override
-    public void onMessage(TCPClient client, String message) {
+    public void onMessage(String message) {
+        final String msg =message;
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         isReadyToSend =true;
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                responseText.setText(msg);
+
+            }
+        });
 
     }
 
@@ -222,8 +229,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         protected String doInBackground(String... message) {
 
             isSettingConnection = true;
-            mTCPClient = new TCPClient();
-            mTCPClient.setTcpListener(MainActivity.this);
+            mTCPClient = new TCPClient(MainActivity.this);
             try {
                 mTCPClient.connect(getIP(), getPort());
                 return mTCPClient.getRemoteHost();
