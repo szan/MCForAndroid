@@ -98,7 +98,7 @@ public class TCPClient {
             byte[] b = EncodingUtils.getAsciiBytes(msg);
             try {
                 dos.write(b);
-                Log.i("TCP", "sending" + b);
+                Log.i("TCP", "sending" + msg);
                 dos.flush();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -49,9 +49,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
 
                 if (isConnected &&isReadyToSend) {
 
-
                         resetValues();
-
                 }
 
 
@@ -67,9 +65,8 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
 
                     MCRequest request = new MCRequest(MCRequest.MCCommand.READ_WORD, MCRequest.MCDeviceCode.D, 202);
                     String msg = MCRequest.generateStringFromRequest(request);
-                    //mTCPClient.sendMessage(msg);
-
-                    uchybText.setText();
+                    mTCPClient.sendMessage(msg);
+                    isReadyToSend = false;
 
                 }
 
@@ -82,10 +79,10 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
             @Override
             public void onClick(View view) {
 
-                //if (isConnected &&isReadyToSend) {
-                Integer value = null;
+                if (isConnected &&isReadyToSend) {
+                Integer value;
                 try {
-                    value = Integer.parseInt(aktualneText.getText().toString()) + Integer.parseInt(skokText.getText().toString());
+                    value = Integer.parseInt(zadaneText.getText().toString()) + Integer.parseInt(skokText.getText().toString());
                 } catch (NumberFormatException e) {
 
                     e.printStackTrace();
@@ -94,9 +91,10 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
                 }
                 MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
                 String msg = MCRequest.generateStringFromRequest(request);
-                //mTCPClient.sendMessage(msg);
+                mTCPClient.sendMessage(msg);
+                isReadyToSend = false;
                 zadaneText.setText(value.toString());
-                //}
+                }
 
 
             }
@@ -107,27 +105,21 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
             @Override
             public void onClick(View view) {
 
-                if (isConnected &&isReadyToSend) {
-
-                    //if (isConnected &&isReadyToSend) {
-                    Integer value = null;
-                    try {
-                        value = Integer.parseInt(aktualneText.getText().toString()) - Integer.parseInt(skokText.getText().toString());
-                    } catch (NumberFormatException e) {
-
-                        e.printStackTrace();
-                        Toast.makeText(EngineControlActivity.this,"Wpisz skok położenia",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
-                    String msg = MCRequest.generateStringFromRequest(request);
-                    //mTCPClient.sendMessage(msg);
-                    // }
-                    zadaneText.setText(value.toString());
-
+                if (isConnected && isReadyToSend) {
+                Integer value;
+                try {
+                    value = Integer.parseInt(zadaneText.getText().toString()) - Integer.parseInt(skokText.getText().toString());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(EngineControlActivity.this,"Wpisz skok położenia",Toast.LENGTH_SHORT).show();
+                    return;
                 }
-
-
+                MCRequest request = new MCRequest(MCRequest.MCCommand.WRITE_WORD, MCRequest.MCDeviceCode.D, 200, value, null);
+                String msg = MCRequest.generateStringFromRequest(request);
+                mTCPClient.sendMessage(msg);
+                isReadyToSend = false;
+                zadaneText.setText(value.toString());
+                }
             }
         });
 
@@ -184,7 +176,6 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
             mTCPClient = null;
             isConnected = false;
         }
-
     }
 
     private String getIP(){
@@ -198,16 +189,48 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
 
     private void resetValues() {
 
+        StringBuilder builder = new StringBuilder(50);
+        builder.append(MCRequest.MCCommand.WRITE_WORD)
+                .append("FF0000")
+                .append(MCRequest.MCDeviceCode.D);
+
+            String devNum = Integer.toHexString(200);
+
+            for ( int i = 1; i<= 8-devNum.length(); i++ ) {
+                builder.append("0");
+            }
+            builder.append(devNum)
+                    .append("0300")
+                    .append("000000000000");
+
         zadaneText.setText("0");
         aktualneText.setText("0");
         uchybText.setText("0");
 
+        mTCPClient.sendMessage(builder.toString());
+        isReadyToSend = false;
+
     }
 
     @Override
-    public void onMessage(TCPClient client, String message) {
+    public void onMessage(String message) {
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         isReadyToSend =true;
+
+        Integer value = null;
+        if (message.startsWith("8100")) {
+
+            value = Integer.parseInt(message.substring(3),16);
+        }
+        final int finalValue = value;
+
+        EngineControlActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                aktualneText.setText(finalValue + "");
+                uchybText.setText(Integer.parseInt(zadaneText.getText().toString()) - finalValue+ "");
+            }
+        });
 
     }
 
@@ -217,8 +240,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         protected String doInBackground(String... message) {
 
             isSettingConnection = true;
-            mTCPClient = new TCPClient();
-            mTCPClient.setTcpListener(EngineControlActivity.this);
+            mTCPClient = new TCPClient(EngineControlActivity.this);
             try {
                 mTCPClient.connect(getIP(), getPort());
                 return mTCPClient.getRemoteHost();
