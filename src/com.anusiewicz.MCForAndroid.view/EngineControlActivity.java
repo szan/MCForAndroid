@@ -190,9 +190,9 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
     private void resetValues() {
 
         StringBuilder builder = new StringBuilder(50);
-        builder.append(MCRequest.MCCommand.WRITE_WORD)
+        builder.append(MCRequest.MCCommand.WRITE_WORD.getCommandCode())
                 .append("FF0000")
-                .append(MCRequest.MCDeviceCode.D);
+                .append(MCRequest.MCDeviceCode.D.getDeviceCode());
 
             String devNum = Integer.toHexString(200);
 
@@ -217,10 +217,12 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         isReadyToSend =true;
 
-        Integer value = null;
+        Integer value;
         if (message.startsWith("8100")) {
 
             value = Integer.parseInt(message.substring(3),16);
+        }  else {
+            return;
         }
         final int finalValue = value;
 
@@ -228,7 +230,7 @@ public class EngineControlActivity extends Activity implements TCPClient.TcpMess
             @Override
             public void run() {
                 aktualneText.setText(finalValue + "");
-                uchybText.setText(Integer.parseInt(zadaneText.getText().toString()) - finalValue+ "");
+                uchybText.setText(Integer.parseInt(zadaneText.getText().toString()) - finalValue + "");
             }
         });
 
