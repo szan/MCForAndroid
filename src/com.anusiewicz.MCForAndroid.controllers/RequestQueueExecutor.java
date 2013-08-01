@@ -24,7 +24,9 @@ public class RequestQueueExecutor extends Thread {
     public void run() {
 
         while (client.isConnected()){
-            client.sendMessage(MCRequest.generateStringFromRequest(requestQueue.peek()));
+            synchronized (requestQueue) {
+                client.sendMessage(MCRequest.generateStringFromRequest(requestQueue.peek()));
+            }
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -34,15 +36,21 @@ public class RequestQueueExecutor extends Thread {
     }
 
     public void enqueueRequest(MCRequest request) {
-        requestQueue.add(request);
+        synchronized (requestQueue) {
+            requestQueue.add(request);
+        }
     }
 
     public MCRequest peekQueue() {
-        return requestQueue.peek();
+        synchronized (requestQueue) {
+            return requestQueue.peek();
+        }
     }
 
     public void pollQueue() {
-        requestQueue.poll();
+        synchronized (requestQueue) {
+            requestQueue.poll();
+        }
     }
 
     public void clearQueue() {
