@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -209,14 +210,13 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
 
     @Override
     public void onMessage(String message) {
-        final String msg =message;
+        final String msg = message;
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         isReadyToSend =true;
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 responseText.setText(msg);
-
             }
         });
 

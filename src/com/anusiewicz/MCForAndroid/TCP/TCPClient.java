@@ -5,7 +5,6 @@ package com.anusiewicz.MCForAndroid.TCP;
  * User: Szymon Anusiewicz
  * Date: 27.06.13
  * Time: 01:50
- * To change this template use File | Settings | File Templates.
  */
 import android.util.Log;
 import org.apache.http.util.EncodingUtils;
