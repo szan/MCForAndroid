@@ -1,5 +1,6 @@
 package com.anusiewicz.MCForAndroid.controllers;
 
+import android.util.Log;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
 
@@ -13,7 +14,7 @@ import java.util.LinkedList;
  */
 public class RequestQueueExecutor extends Thread {
 
-    private LinkedList<MCRequest> requestQueue = new LinkedList<MCRequest>();
+    private LinkedList<String> requestQueue = new LinkedList<String>();
     private TCPClient client;
 
     public RequestQueueExecutor(TCPClient client) {
@@ -22,35 +23,37 @@ public class RequestQueueExecutor extends Thread {
 
     @Override
     public void run() {
+        Log.i("RequestQueueExecutor", "Starting executor thread...") ;
+            while ((client != null) && client.isConnected()){
+                synchronized (requestQueue) {
+                    if (requestQueue.peek()!= null){
+                        Log.i("RequestQueueExecutor","Sending first from request queue: " + requestQueue.toString()) ;
+                        client.sendMessage(requestQueue.peek());
+                        try {
+                            synchronized (this) {
+                                Log.i("RequestQueueExecutor","Thread waiting...") ;
+                                this.wait();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
 
-        while (client.isConnected()){
-            synchronized (requestQueue) {
-                client.sendMessage(MCRequest.generateStringFromRequest(requestQueue.peek()));
             }
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
-    public void enqueueRequest(MCRequest request) {
-        synchronized (requestQueue) {
+    public void enqueueRequest(String request) {
             requestQueue.add(request);
-        }
     }
 
-    public MCRequest peekQueue() {
-        synchronized (requestQueue) {
+    public String peekQueue() {
             return requestQueue.peek();
-        }
     }
 
     public void pollQueue() {
-        synchronized (requestQueue) {
+
             requestQueue.poll();
-        }
     }
 
     public void clearQueue() {

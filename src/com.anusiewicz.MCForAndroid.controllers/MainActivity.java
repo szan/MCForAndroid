@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
@@ -22,8 +21,9 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     private TextView infoText;
     private CheckBox checkBox;
     private boolean isSettingConnection = false;
-    private boolean isConnected, isReadyToSend;
+    private boolean isConnected;
     private Spinner commandSpinner,deviceSpinner;
+    private RequestQueueExecutor requestQueueExecutor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,11 +124,11 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         bSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isConnected && isReadyToSend){
+                if (isConnected){
 
                     String msg = commandText.getText().toString();
-                    mTCPClient.sendMessage(msg);
-                    isReadyToSend = false;
+                    requestQueueExecutor.enqueueRequest(msg);
+                    Log.i("MainActivity", requestQueueExecutor.peekQueue().toString());
                 }
             }
         });
@@ -189,7 +189,6 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     @Override
     protected void onPause() {
         super.onPause();
-
         // disconnect
         if (mTCPClient != null) {
             mTCPClient.disconnect();
@@ -211,8 +210,11 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     @Override
     public void onMessage(String message) {
         final String msg = message;
+        synchronized ( requestQueueExecutor) {
+        requestQueueExecutor.notify();
+        requestQueueExecutor.pollQueue();
+        }
         Log.i("TCP","ON MESSAGE ____________________________" + message);
-        isReadyToSend =true;
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -246,7 +248,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 infoText.setText("Connected to: " + remoteHost);
                 infoText.setTextColor(Color.GREEN);
                 isConnected = true;
-                isReadyToSend = true;
+                requestQueueExecutor = new RequestQueueExecutor(mTCPClient);
+                requestQueueExecutor.start();
             } else {
                 infoText.setText("Couldn't connect");
                 infoText.setTextColor(Color.RED);

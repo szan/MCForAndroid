@@ -44,7 +44,10 @@ public class TCPClient {
     }
 
     public boolean isConnected(){
+        if (socket != null) {
         return socket.isConnected();
+        } else
+        return false;
     }
 
     public boolean connect(String serverIpOrHost, int port) {
