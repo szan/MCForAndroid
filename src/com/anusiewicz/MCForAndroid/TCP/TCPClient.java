@@ -32,6 +32,7 @@ public class TCPClient {
     private boolean listening = false;
     private TcpMessageListener listener;
     private DataOutputStream dos;
+    private boolean testMode = true;
 
 
     public String getRemoteHost(){
@@ -92,6 +93,12 @@ public class TCPClient {
     }
 
     public void sendMessage(String msg) {
+
+        if(testMode && out!=null){
+            out.println(msg);
+            out.flush();
+            return;
+        }
         if(dos != null)
         {
             byte[] b = EncodingUtils.getAsciiBytes(msg);
@@ -102,10 +109,8 @@ public class TCPClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            //out.println(msg);
-            //out.flush();
         }
+
     }
 
     public void disconnect() {
