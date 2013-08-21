@@ -23,7 +23,6 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     private boolean isSettingConnection = false;
     private boolean isConnected;
     private Spinner commandSpinner,deviceSpinner;
-    private RequestQueueExecutor requestQueueExecutor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,10 +124,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             @Override
             public void onClick(View view) {
                 if (isConnected){
-
                     String msg = commandText.getText().toString();
-                    requestQueueExecutor.enqueueRequest(msg);
-                    Log.i("MainActivity", requestQueueExecutor.peekQueue().toString());
+                    mTCPClient.enqueueRequest(msg);
                 }
             }
         });
@@ -187,8 +184,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         // disconnect
         if (mTCPClient != null) {
             mTCPClient.disconnect();
@@ -210,10 +207,6 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     @Override
     public void onMessage(String message) {
         final String msg = message;
-        synchronized ( requestQueueExecutor) {
-        requestQueueExecutor.notify();
-        requestQueueExecutor.pollQueue();
-        }
         Log.i("TCP","ON MESSAGE ____________________________" + message);
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
@@ -224,13 +217,26 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
 
     }
 
+    @Override
+    public void lostConnection() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(MainActivity.this,"Connection Lost...",Toast.LENGTH_SHORT).show();
+                infoText.setText("Not connected");
+                infoText.setTextColor(Color.LTGRAY);
+                }
+        });
+        isConnected = false;
+    }
+
     public class connectTask extends AsyncTask<String,String,String> {
 
         @Override
         protected String doInBackground(String... message) {
 
             isSettingConnection = true;
-            mTCPClient = new TCPClient(MainActivity.this);
+            mTCPClient = new TCPClient();
+            mTCPClient.registerListener(MainActivity.this);
             try {
                 mTCPClient.connect(getIP(), getPort());
                 return mTCPClient.getRemoteHost();
@@ -248,8 +254,6 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 infoText.setText("Connected to: " + remoteHost);
                 infoText.setTextColor(Color.GREEN);
                 isConnected = true;
-                requestQueueExecutor = new RequestQueueExecutor(mTCPClient);
-                requestQueueExecutor.start();
             } else {
                 infoText.setText("Couldn't connect");
                 infoText.setTextColor(Color.RED);

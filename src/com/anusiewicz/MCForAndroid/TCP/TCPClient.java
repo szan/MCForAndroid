@@ -8,32 +8,39 @@ package com.anusiewicz.MCForAndroid.TCP;
  */
 import android.util.Log;
 import org.apache.http.util.EncodingUtils;
-
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TCPClient {
 
-    public TCPClient(TcpMessageListener listener) {
-        this.listener = listener;
+    private Socket socket = null;
+    private PrintWriter out = null;
+    private BufferedReader in = null;
+    private Thread listenThread = null, sendingThread = null;
+    private boolean listening = false;
+    private List<TcpMessageListener> listeners;
+    private LinkedList<String> requestQueue = new LinkedList<String>();
+    private DataOutputStream dos;
+    private boolean testMode = true;
+
+    public TCPClient() {
+        listeners = new ArrayList<TcpMessageListener>();
     }
 
     public interface TcpMessageListener{
 
         public void onMessage(String message);
+
+        public void lostConnection();
     }
 
-    private Socket socket = null;
-    private PrintWriter out = null;
-    private BufferedReader in = null;
-    private Thread listenThread = null;
-    private boolean listening = false;
-    private TcpMessageListener listener;
-    private DataOutputStream dos;
-    private boolean testMode = true;
-
+    public void registerListener(TcpMessageListener listener) {
+        listeners.add(listener);
+    }
 
     public String getRemoteHost(){
         if (isConnected()){
@@ -57,7 +64,6 @@ public class TCPClient {
             dos = new DataOutputStream(socket.getOutputStream());
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.listenThread = new Thread(new Runnable() {
-
                 public void run() {
                     int charsRead = 0;
                     char[] buff = new char[4096];
@@ -67,20 +73,49 @@ public class TCPClient {
                             if (charsRead > 0) {
                                 Log.d("TCPClient", new String(buff).trim());
                                 String input = new String(buff).trim();
+                                for (TcpMessageListener listener: listeners){
                                     listener.onMessage(input);
+                                }
+                                synchronized ( requestQueue) {
+                                    requestQueue.notify();
+                                    pollQueue();
+                                }
                             }
                         } catch (IOException e) {
                             Log.e("TCPClient", "IOException while reading input stream");
+                            connectionLost();
                             listening = false;
                         }
                     }
+                    connectionLost();
                 }
 
+            });
+            this.sendingThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (TCPClient.this.isConnected()){
+                        synchronized (requestQueue) {
+                            if (peekQueue()!= null){
+                                Log.i("TCPClient","Sending first from request queue: " + requestQueue.toString()) ;
+                                sendMessage(peekQueue());
+                                try {
+                                    Log.i("TCPClient","Thread waiting...") ;
+                                    requestQueue.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+
+                    }
+                }
             });
 
             this.listening = true;
             this.listenThread.setDaemon(true);
             this.listenThread.start();
+            this.sendingThread.start();
 
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host");
@@ -95,7 +130,7 @@ public class TCPClient {
         return true;
     }
 
-    public void sendMessage(String msg) {
+    private void sendMessage(String msg) {
 
         if(testMode && out!=null){
             out.println(msg);
@@ -115,7 +150,11 @@ public class TCPClient {
         }
 
     }
-
+    private void connectionLost() {
+        for (TcpMessageListener listener : listeners) {
+            listener.lostConnection();
+        }
+    }
     public void disconnect() {
         try {
             if(out != null){
@@ -133,9 +172,27 @@ public class TCPClient {
             if(this.listenThread != null){
                 this.listening = false;
                 this.listenThread.interrupt();
+                this.sendingThread.interrupt();
+                clearQueue();
             }
         } catch (IOException ioe) {
             System.err.println("I/O error in closing connection.");
         }
+    }
+
+    public void enqueueRequest(String request) {
+        requestQueue.add(request);
+    }
+
+    public String peekQueue() {
+        return requestQueue.peek();
+    }
+
+    public void pollQueue() {
+        requestQueue.poll();
+    }
+
+    public void clearQueue() {
+        requestQueue.clear();
     }
 }
