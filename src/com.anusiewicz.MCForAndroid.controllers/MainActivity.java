@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.model.MCCommand;
+import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
 
 public class MainActivity extends Activity implements TCPClient.TcpMessageListener {
@@ -40,28 +42,37 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         deviceSpinner = (Spinner) findViewById(R.id.deviceSpinner);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
 
-        commandSpinner.setAdapter(new ArrayAdapter<MCRequest.MCCommand>(this, android.R.layout.simple_spinner_item, MCRequest.MCCommand.values()));
+        commandSpinner.setAdapter(new ArrayAdapter<MCCommand>(this, android.R.layout.simple_spinner_item, MCCommand.values()));
         commandSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.PLC_RUN) || commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.PLC_STOP)) {
+                if (commandSpinner.getSelectedItem().equals(MCCommand.PLC_RUN) || commandSpinner.getSelectedItem().equals(MCCommand.PLC_STOP)) {
                     deviceSpinner.setEnabled(false);
                     deviceNumberText.setEnabled(false);
                     wordValueText.setEnabled(false);
                     checkBox.setEnabled(false);
-                }  else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.READ_BIT) || commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.READ_WORD)) {
+                }  else if (commandSpinner.getSelectedItem().equals(MCCommand.READ_BIT)) {
                     deviceSpinner.setEnabled(true);
+                    deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(MainActivity.this, android.R.layout.simple_spinner_item, MCDeviceCode.bitDevices()));
                     deviceNumberText.setEnabled(true);
                     wordValueText.setEnabled(false);
                     checkBox.setEnabled(false);
-                }  else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.WRITE_BIT)) {
+                } else if(commandSpinner.getSelectedItem().equals(MCCommand.READ_WORD)){
                     deviceSpinner.setEnabled(true);
+                    deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(MainActivity.this, android.R.layout.simple_spinner_item, MCDeviceCode.wordDevices()));
+                    deviceNumberText.setEnabled(true);
+                    wordValueText.setEnabled(false);
+                    checkBox.setEnabled(false);
+                } else if (commandSpinner.getSelectedItem().equals(MCCommand.WRITE_BIT)) {
+                    deviceSpinner.setEnabled(true);
+                    deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(MainActivity.this, android.R.layout.simple_spinner_item, MCDeviceCode.bitDevices()));
                     deviceNumberText.setEnabled(true);
                     wordValueText.setEnabled(false);
                     checkBox.setEnabled(true);
-                }   else if (commandSpinner.getSelectedItem().equals(MCRequest.MCCommand.WRITE_WORD)) {
+                }   else if (commandSpinner.getSelectedItem().equals(MCCommand.WRITE_WORD)) {
                     deviceSpinner.setEnabled(true);
+                    deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(MainActivity.this, android.R.layout.simple_spinner_item, MCDeviceCode.wordDevices()));
                     deviceNumberText.setEnabled(true);
                     wordValueText.setEnabled(true);
                     checkBox.setEnabled(false);
@@ -75,7 +86,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             }
         }
         );
-        deviceSpinner.setAdapter(new ArrayAdapter<MCRequest.MCDeviceCode>(this, android.R.layout.simple_spinner_item, MCRequest.MCDeviceCode.values()));
+
+        deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(this, android.R.layout.simple_spinner_item, MCDeviceCode.values()));
 
         Button bConnect = (Button) findViewById(R.id.buttonConnect);
         bConnect.setOnClickListener(new View.OnClickListener() {
@@ -167,8 +179,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
 
                 try {
                     String command =
-                            MCRequest.generateStringFromRequest(new MCRequest((MCRequest.MCCommand)commandSpinner.getSelectedItem(),
-                                    (MCRequest.MCDeviceCode)deviceSpinner.getSelectedItem(),
+                            MCRequest.generateStringFromRequest(new MCRequest((MCCommand)commandSpinner.getSelectedItem(),
+                                    (MCDeviceCode)deviceSpinner.getSelectedItem(),
                                     devNum,
                                     wordNum,
                                     bit));
@@ -207,7 +219,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
     @Override
     public void onMessage(String message) {
         final String msg = message;
-        Log.i("TCP","ON MESSAGE ____________________________" + message);
+        Log.i("TCP","RECEIVED MESSAGE: " + message);
         MainActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
