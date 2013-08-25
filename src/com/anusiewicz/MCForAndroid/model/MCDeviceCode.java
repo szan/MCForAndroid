@@ -19,8 +19,8 @@ public enum MCDeviceCode {
     S("5320", 4095);
 
     private String deviceCode;
-
     private int deviceRange;
+
     private MCDeviceCode(String code, int range) {
         deviceCode = code;
         deviceRange = range;
