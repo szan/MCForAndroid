@@ -1,5 +1,7 @@
 package com.anusiewicz.MCForAndroid.model;
 
+import java.util.ArrayList;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
@@ -34,25 +36,25 @@ public enum MCDeviceCode {
         return deviceRange;
     }
 
-    public static MCDeviceCode[] bitDevices() {
+    public static ArrayList<MCDeviceCode> bitDevices() {
 
-        MCDeviceCode[] bitDevices = new MCDeviceCode[6];
-        bitDevices[0] = X;
-        bitDevices[1] = Y;
-        bitDevices[2] = M;
-        bitDevices[3] = S;
-        bitDevices[4] = TS;
-        bitDevices[5] = CS;
+        ArrayList<MCDeviceCode> bitDevices = new ArrayList<MCDeviceCode>(6);
+        bitDevices.add(X);
+        bitDevices.add(Y);
+        bitDevices.add(M);
+        bitDevices.add(S);
+        bitDevices.add(TS);
+        bitDevices.add(CS);
 
         return bitDevices;
     }
 
-    public static MCDeviceCode[] wordDevices() {
-        MCDeviceCode[] wordDevices = new MCDeviceCode[4];
-        wordDevices[0] = R;
-        wordDevices[1] = D;
-        wordDevices[2] = TN;
-        wordDevices[3] = CN;
+    public static ArrayList<MCDeviceCode> wordDevices() {
+        ArrayList<MCDeviceCode> wordDevices = new ArrayList<MCDeviceCode>(4);
+        wordDevices.add(R);
+        wordDevices.add(D);
+        wordDevices.add(TN);
+        wordDevices.add(CN);
 
         return wordDevices;
     }
