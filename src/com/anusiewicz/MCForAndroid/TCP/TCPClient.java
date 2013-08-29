@@ -21,6 +21,7 @@ public class TCPClient {
     private BufferedReader in = null;
     private Thread listenThread = null, sendingThread = null;
     private boolean listening = false;
+    private boolean closeFlag = false;
     private List<TcpMessageListener> listeners = new LinkedList<TcpMessageListener>();
 
     private final LinkedList<String> requestQueue = new LinkedList<String>();
@@ -58,6 +59,7 @@ public class TCPClient {
     }
 
     public boolean connect(String serverIpOrHost, int port) {
+        closeFlag = false;
         try {
             socket = new Socket(serverIpOrHost, port);
             out = new PrintWriter(socket.getOutputStream(), true);
@@ -82,7 +84,9 @@ public class TCPClient {
                             listening = false;
                         }
                     }
-                    connectionLost();
+                    if (!closeFlag) {
+                        connectionLost();
+                    }
                 }
 
             });
@@ -163,6 +167,7 @@ public class TCPClient {
         onConnLostListener.lostConnection();
     }
     public void disconnect() {
+        closeFlag = true;
         try {
             if(out != null){
                 out.close();
