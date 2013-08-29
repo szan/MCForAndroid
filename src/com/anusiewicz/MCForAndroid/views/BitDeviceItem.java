@@ -13,8 +13,8 @@ import com.anusiewicz.MCForAndroid.model.MCRequest;
  * Date: 25.08.13
  * Time: 15:22
  */
-public class MCBitDeviceItem extends MCDeviceItem {
-    public MCBitDeviceItem(Context context, MCDeviceCode deviceCode, int deviceNumber, String deviceName) throws IndexOutOfBoundsException {
+public class BitDeviceItem extends DeviceItem {
+    public BitDeviceItem(Context context, MCDeviceCode deviceCode, int deviceNumber, String deviceName) throws IndexOutOfBoundsException {
         super(context, deviceCode, deviceNumber,deviceName);
 
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
