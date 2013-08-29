@@ -1,9 +1,11 @@
 package com.anusiewicz.MCForAndroid.controllers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.views.ConnectionActivity;
 
 import java.util.ArrayList;
 
@@ -58,10 +60,16 @@ public class ConnectionManager implements TCPClient.OnTCPConnectionLostListener 
         connectionListeners.add(listener);
     }
 
+    public void unregisterListener(ConnectionListener listener) {
+        connectionListeners.remove(listener);
+    }
+
     public void connectToRemoteHost(String IPAddress, String port) {
         if (!getConnectionStatus().equals(ConnectionStatus.OK))  {
             Log.i(TAG,"Trying to connect");
             new ConnectTask().execute(IPAddress,port);
+        } else {
+            reconnectToRemoteHost(IPAddress, port);
         }
     }
 
@@ -78,8 +86,17 @@ public class ConnectionManager implements TCPClient.OnTCPConnectionLostListener 
              mTCPClient.disconnect();
              mTCPClient = null;
         }
+        for (ConnectionListener listener: connectionListeners){
+            listener.onConnectionLost();
+        }
 
     }
+
+    public void showConnectionActivity(Context context) {
+        Intent i = new Intent(context, ConnectionActivity.class);
+        context.startActivity(i);
+    }
+
 
     public class ConnectTask extends AsyncTask<String,Void,String> {
 
@@ -125,6 +142,7 @@ public class ConnectionManager implements TCPClient.OnTCPConnectionLostListener 
     @Override
     public void lostConnection() {
         setConnectionStatus(ConnectionStatus.LOST);
+
         Log.i(TAG,"Connection lost");
         for (ConnectionListener listener: connectionListeners){
             listener.onConnectionLost();

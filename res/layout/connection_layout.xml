@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
+                  android:layout_height="wrap_content" android:layout_gravity="left|center_vertical" android:id="@+id/linearLayout1"
+                  android:paddingTop="20dp" android:paddingLeft="10dp" android:paddingRight="10dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content" android:text="IP Adress:"
+                  android:id="@+id/textView2" android:textSize="16sp"/>
+        <EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="192.168.0.12"
+                  android:id="@+id/ipAdress"/>
+    </LinearLayout>
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
+                  android:layout_height="wrap_content" android:id="@+id/linearLayout"
+                  android:layout_gravity="left|center_vertical" android:paddingTop="10dp" android:paddingLeft="10dp"
+                  android:paddingRight="10dp">
+        <TextView android:layout_width="80dp" android:layout_height="wrap_content" android:text="Port:"
+                  android:id="@+id/textView1" android:textSize="16sp"/>
+        <EditText android:layout_width="70dp" android:layout_height="wrap_content" android:text="5555"
+                  android:id="@+id/portAddress"/>
+    </LinearLayout>
+    <com.anusiewicz.MCForAndroid.views.ConnectionInfoText android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:id="@+id/connectionInfoItem"
+          android:layout_gravity="left" android:paddingLeft="10dp"/>
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
+                  android:layout_height="fill_parent" android:weightSum="2" android:id="@+id/linearLayout2"
+                  android:paddingTop="20dp" android:paddingRight="10dp" android:paddingLeft="10dp">
+        <Button android:layout_width="0dp" android:layout_height="wrap_content" android:text="Connect"
+                android:id="@+id/buttonConnect" android:layout_gravity="center_horizontal"
+                android:layout_weight="1" android:textStyle="bold" android:textColor="#17af0a"
+                />
+        <Button android:layout_width="0dp" android:layout_height="wrap_content" android:text="Disconnect"
+                android:id="@+id/buttonDisconnect" android:layout_gravity="center_horizontal"
+                android:layout_weight="1" android:textStyle="bold" android:textColor="#ec1800"/>
+    </LinearLayout>
+</LinearLayout>
