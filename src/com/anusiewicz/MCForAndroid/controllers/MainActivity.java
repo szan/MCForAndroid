@@ -1,6 +1,7 @@
 package com.anusiewicz.MCForAndroid.controllers;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,11 +14,10 @@ import com.anusiewicz.MCForAndroid.model.MCCommand;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
 
-public class MainActivity extends Activity implements TCPClient.TcpMessageListener {
-    /**
-     * Called when the activity is first created.
+public class MainActivity extends Activity implements TCPClient.TcpMessageListener,ConnectionManager.ConnectionListener {
 
-    */
+    private Context context = MCForAndroidApplication.getAppContext();
+    private ConnectionManager connectionManager;
     private TCPClient mTCPClient;
     private EditText serverIpText, portText, commandText, responseText, deviceNumberText,wordValueText;
     private TextView infoText;
@@ -31,6 +31,8 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        connectionManager = MCForAndroidApplication.getConnectionManager();
+        connectionManager.registerListener(this);
         serverIpText = (EditText) findViewById(R.id.ipAdress);
         portText = (EditText) findViewById(R.id.portAddress);
         infoText = (TextView) findViewById(R.id.infoText);
@@ -95,23 +97,13 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
             public void onClick(View view) {
 
                 if (!isSettingConnection) {
-                    try
-                    {
-                     if(getIP().length() != 0 && getPort() != 0)
-                      {
-                          if (isConnected) {
-                              mTCPClient.disconnect();
-                              mTCPClient = null;
-                          }
-                         infoText.setText("Trying to connect...");
-                         infoText.setTextColor(Color.YELLOW);
-                         new connectTask().execute("");
-                      }
-                    }
-                     catch(Exception e)
-                    {
-                       e.printStackTrace();
-                       Log.i("TCP", "Could not connect " + e);
+
+                    if(getIP().length() != 0 && getPort().length() != 0) {
+                         if (isConnected) {
+                             connectionManager.reconnectToRemoteHost(getIP(),getPort());
+                         } else {
+                             connectionManager.connectToRemoteHost(getIP(),getPort());
+                         }
                     }
                 }
             }
@@ -124,9 +116,7 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
                 if (mTCPClient != null && !isSettingConnection) {
                     mTCPClient.disconnect();
                     mTCPClient = null;
-                    infoText.setText("Not connected");
-                    infoText.setTextColor(Color.LTGRAY);
-                    isConnected = false;
+
                 }
             }
         });
@@ -211,67 +201,65 @@ public class MainActivity extends Activity implements TCPClient.TcpMessageListen
         return serverIpText.getText().toString();
     }
 
-    private int getPort() {
-        Log.i("getPort", portText.getText().toString());
-        return Integer.parseInt(portText.getText().toString());
+    private String getPort() {
+        return portText.getText().toString();
     }
 
+
+
     @Override
-    public void onMessage(String message) {
-        final String msg = message;
-        Log.i("TCP","RECEIVED MESSAGE: " + message);
+    public void onConnectionEstablished() {
+        mTCPClient = connectionManager.getTCPClient();
         MainActivity.this.runOnUiThread(new Runnable() {
-            @Override
             public void run() {
-                responseText.setText(msg);
+                infoText.setText("Connected to: " + mTCPClient.getRemoteHost());
+                infoText.setTextColor(Color.GREEN);
             }
-        });
-
+            });
+        isConnected = true;
+        isSettingConnection = false;
     }
 
     @Override
-    public void lostConnection() {
+    public void onConnectionLost() {
         MainActivity.this.runOnUiThread(new Runnable() {
             public void run() {
                 Toast.makeText(MainActivity.this,"Connection Lost...",Toast.LENGTH_SHORT).show();
                 infoText.setText("Not connected");
                 infoText.setTextColor(Color.LTGRAY);
-                }
+            }
         });
+        isConnected = false;
+        isSettingConnection = false;
+    }
+
+    @Override
+    public void onConnectionFailed() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                infoText.setText("Couldn't connect");
+                infoText.setTextColor(Color.RED);
+            }
+        });
+        isConnected = false;
+        isSettingConnection = false;
+    }
+
+    @Override
+    public void onConnecting() {
+        MainActivity.this.runOnUiThread(new Runnable() {
+            public void run() {
+                infoText.setText("Trying to connect...");
+                infoText.setTextColor(Color.YELLOW);
+            }
+        });
+        isSettingConnection = true;
         isConnected = false;
     }
 
-    public class connectTask extends AsyncTask<String,String,String> {
-
-        @Override
-        protected String doInBackground(String... message) {
-
-            isSettingConnection = true;
-            mTCPClient = new TCPClient();
-            mTCPClient.registerListener(MainActivity.this);
-            try {
-                mTCPClient.connect(getIP(), getPort());
-                return mTCPClient.getRemoteHost();
-            } catch (Exception e) {
-                  Log.e("TCP", "Couldn't connect to remote host. " + e);
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String remoteHost) {
-            super.onPostExecute(remoteHost);
-
-            if (remoteHost != null) {
-                infoText.setText("Connected to: " + remoteHost);
-                infoText.setTextColor(Color.GREEN);
-                isConnected = true;
-            } else {
-                infoText.setText("Couldn't connect");
-                infoText.setTextColor(Color.RED);
-                isConnected = false;
-            }
-             isSettingConnection = false;
-        }
+    @Override
+    public void onReceive() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
+
 }
