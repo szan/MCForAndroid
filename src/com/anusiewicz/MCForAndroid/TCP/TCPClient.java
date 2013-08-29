@@ -11,7 +11,6 @@ import org.apache.http.util.EncodingUtils;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,18 +21,22 @@ public class TCPClient {
     private BufferedReader in = null;
     private Thread listenThread = null, sendingThread = null;
     private boolean listening = false;
-    private List<TcpMessageListener> listeners;
-    private LinkedList<String> requestQueue = new LinkedList<String>();
-    private DataOutputStream dos;
-    private boolean testMode = true;
+    private List<TcpMessageListener> listeners = new LinkedList<TcpMessageListener>();
 
-    public TCPClient() {
-        listeners = new ArrayList<TcpMessageListener>();
-    }
+    private final LinkedList<String> requestQueue = new LinkedList<String>();
+    private DataOutputStream dos;
+    private OnTCPConnectionLostListener onConnLostListener;
 
     public interface TcpMessageListener{
 
-        public void onMessage(String message);
+        public void onReceive();
+    }
+
+        public TCPClient(OnTCPConnectionLostListener listener) {
+        onConnLostListener = listener;
+    }
+
+    public interface OnTCPConnectionLostListener {
 
         public void lostConnection();
     }
@@ -51,10 +54,7 @@ public class TCPClient {
     }
 
     public boolean isConnected(){
-        if (socket != null) {
-        return socket.isConnected();
-        } else
-        return false;
+        return socket != null && socket.isConnected();
     }
 
     public boolean connect(String serverIpOrHost, int port) {
@@ -73,17 +73,12 @@ public class TCPClient {
                             if (charsRead > 0) {
                                 Log.d("TCPClient", new String(buff).trim());
                                 String input = new String(buff).trim();
-                                for (TcpMessageListener listener: listeners){
-                                    listener.onMessage(input);
-                                }
-                                synchronized ( requestQueue) {
-                                    requestQueue.notify();
-                                    pollQueue();
-                                }
+
+                                onReceivedMessage(input);
+
                             }
                         } catch (IOException e) {
                             Log.e("TCPClient", "IOException while reading input stream");
-                            connectionLost();
                             listening = false;
                         }
                     }
@@ -100,7 +95,7 @@ public class TCPClient {
                                 Log.i("TCPClient","Sending first from request queue: " + requestQueue.toString()) ;
                                 sendMessage(peekQueue());
                                 try {
-                                    Log.i("TCPClient","Thread waiting...") ;
+                                    Log.i("TCPClient","Sending thread idle state...") ;
                                     requestQueue.wait();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
@@ -130,8 +125,22 @@ public class TCPClient {
         return true;
     }
 
+    private void onReceivedMessage(String message){
+        String request = null;
+        synchronized ( requestQueue) {
+            request = pollQueue();
+            requestQueue.notify();
+        }
+        Log.i("TCPClient", "Received response: " + message);
+        //TODO: put request and response in HashMap
+        for (TcpMessageListener listener : listeners) {
+            listener.onReceive();
+        }
+    }
+
     private void sendMessage(String msg) {
 
+        boolean testMode = true;
         if(testMode && out!=null){
             out.println(msg);
             out.flush();
@@ -142,18 +151,16 @@ public class TCPClient {
             byte[] b = EncodingUtils.getAsciiBytes(msg);
             try {
                 dos.write(b);
-                Log.i("TCP", "sending" + b);
+                Log.i("TCP", "Sending: " + b);
                 dos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
     }
+
     private void connectionLost() {
-        for (TcpMessageListener listener : listeners) {
-            listener.lostConnection();
-        }
+        onConnLostListener.lostConnection();
     }
     public void disconnect() {
         try {
@@ -188,8 +195,8 @@ public class TCPClient {
         return requestQueue.peek();
     }
 
-    public void pollQueue() {
-        requestQueue.poll();
+    public String pollQueue() {
+        return requestQueue.poll();
     }
 
     public void clearQueue() {
