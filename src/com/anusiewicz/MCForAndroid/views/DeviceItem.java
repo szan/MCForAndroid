@@ -33,16 +33,5 @@ public abstract class DeviceItem extends LinearLayout {
 
     public abstract void updateView();
 
-    public static DeviceItem createMCDeviceItem(Context context, MCDeviceCode deviceCode, int deviceNumber, String deviceName) {
-
-        if (MCDeviceCode.bitDevices().contains(deviceCode)){
-             return new BitDeviceItem(context,deviceCode,deviceNumber,deviceName);
-        } else if (MCDeviceCode.wordDevices().contains(deviceCode)) {
-             return  new WordDeviceItem(context,deviceCode,deviceNumber,deviceName);
-        } else {
-            return null;
-        }
-
-    }
 
 }
