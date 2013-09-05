@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MCForAndroid</string>
+    <string name="device_editor">Device Editor</string>
+    <string name="conn_option">Manage Connections</string>
+    <string name="exit_option">Exit</string>
 </resources>
