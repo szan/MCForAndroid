@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_item_conn" android:title="@string/conn_option"></item>
+    <item android:id="@+id/menu_item_exit" android:title="@string/exit_option" android:alphabeticShortcut="x"></item>
+</menu>
