@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.model.Constants;
 import com.anusiewicz.MCForAndroid.model.MCCommand;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
@@ -15,11 +16,7 @@ import com.anusiewicz.MCForAndroid.views.DeviceEditorActivity;
 
 public class CustomCommandActivity extends ActivityWithMenu implements TCPClient.TcpMessageListener,ConnectionManager.ConnectionListener {
 
-    private static final String DEVICE_NAME_TAG = "device_name";
-    private static final String DEVICE_TYPE_TAG = "device_type";
-    private static final String DEVICE_NUMBER_TAG = "device_number";
 
-    //private ConnectionManager connectionManager;
     private TCPClient mTCPClient;
     private EditText commandText, responseText, deviceNumberText,wordValueText;
     private ConnectionInfoText infoText;
@@ -32,7 +29,6 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
         super.onCreate(savedInstanceState);
         setContentView(R.layout.custom_command_layout);
 
-        //connectionManager = MCForAndroidApplication.getConnectionManager();
         connectionManager.registerListener(this);
         infoText = (ConnectionInfoText) findViewById(R.id.infoText);
         commandText = (EditText) findViewById(R.id.editCommand);
@@ -228,10 +224,9 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
         if (requestCode == 1) {
 
             if(resultCode == RESULT_OK){
-                final String name = data.getStringExtra(DEVICE_NAME_TAG);
-                //final String deviceType = data.getStringExtra(DEVICE_TYPE_TAG);
-                final MCDeviceCode code = (MCDeviceCode) data.getSerializableExtra(DEVICE_TYPE_TAG);
-                final Integer number = data.getIntExtra(DEVICE_NUMBER_TAG, 0);
+                final String name = data.getStringExtra(Constants.DEVICE_NAME_TAG);
+                final MCDeviceCode code = (MCDeviceCode) data.getSerializableExtra(Constants.DEVICE_TYPE_TAG);
+                final Integer number = data.getIntExtra(Constants.DEVICE_NUMBER_TAG, 0);
 
                 CustomCommandActivity.this.runOnUiThread(new Runnable() {
                     public void run() {
