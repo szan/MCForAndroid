@@ -4,45 +4,14 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_gravity="center">
-        <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="IP Adress:"
-                android:id="@+id/textView"/>
-        <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="192.168.0.12"
-                android:id="@+id/ipAdress"/>
-    </LinearLayout>
+    <view android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          class="com.anusiewicz.MCForAndroid.views.ConnectionInfoText" android:id="@+id/infoText"
+          android:layout_gravity="left|center_vertical" android:textSize="18sp"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-        <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:text="Port:"
-                android:id="@+id/textView1"/>
-        <EditText
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:text="5555"
-                android:id="@+id/portAddress"/>
-    </LinearLayout>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not connected"
-            android:id="@+id/infoText" android:textColor="#d6d6d6" android:textSize="18dp"/>
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" android:paddingTop="10dp">
         <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,10 +47,11 @@
                 android:layout_width="187dp"
                 android:layout_height="wrap_content"
                 android:text="Generate command"
-                android:id="@+id/buttonGenerate" android:layout_gravity="center_horizontal"/>
+                android:id="@+id/buttonGenerate" android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"/>
         <EditText
                 android:layout_width="fill_parent"
-                android:layout_height="69dp"
+                android:layout_height="100dp"
                 android:id="@+id/editCommand"
                 android:gravity="left|top"
                 android:layout_marginTop="15dp" android:hint="Enter command here..."/>
@@ -92,7 +62,7 @@
                 android:id="@+id/buttonSend" android:layout_gravity="center_horizontal" android:textStyle="bold"/>
         <EditText
                 android:layout_width="fill_parent"
-                android:layout_height="52dp"
+                android:layout_height="100dp"
                 android:id="@+id/editResponse" android:gravity="left|top"/>
     </LinearLayout>
     <LinearLayout
@@ -102,15 +72,8 @@
         <Button
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Connect"
-                android:id="@+id/buttonConnect" android:layout_gravity="center_horizontal|bottom" android:layout_weight="1"
-                android:textStyle="bold" android:textColor="#17af0a"/>
-        <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Disconnect"
-                android:id="@+id/buttonDisconnect" android:layout_gravity="center_horizontal|bottom" android:layout_weight="1"
-                android:textStyle="bold" android:textColor="#ec1800"/>
+                android:text="Pick Device"
+                android:id="@+id/buttonPick" android:layout_weight="1" android:layout_gravity="bottom"/>
     </LinearLayout>
 </LinearLayout>
 

@@ -6,7 +6,7 @@
     <uses-sdk android:minSdkVersion="8"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:label="@string/app_name">
-        <activity android:name=".controllers.MainActivity"
+        <activity android:name=".controllers.CustomCommandActivity"
                   android:label="@string/app_name"
                   android:screenOrientation="portrait">
             <intent-filter>
