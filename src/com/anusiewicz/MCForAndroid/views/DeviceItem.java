@@ -5,6 +5,8 @@ import android.widget.LinearLayout;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
 
+import java.util.HashMap;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
@@ -31,7 +33,7 @@ public abstract class DeviceItem extends LinearLayout {
 
     public abstract MCRequest getRequest();
 
-    public abstract void updateView();
+    public abstract void updateViewFromData(HashMap data);
 
 
 }

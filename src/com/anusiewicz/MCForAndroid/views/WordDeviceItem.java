@@ -7,8 +7,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.anusiewicz.MCForAndroid.R;
+import com.anusiewicz.MCForAndroid.model.MCCommand;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
+import com.anusiewicz.MCForAndroid.model.MCResponse;
+
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,11 +47,15 @@ public class WordDeviceItem extends DeviceItem {
     @Override
     public MCRequest getRequest() {
 
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return new MCRequest(MCCommand.READ_WORD,deviceType,deviceNumber);
     }
 
     @Override
-    public void updateView() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void updateViewFromData(HashMap data) {
+        String key = MCRequest.generateStringFromRequest(this.getRequest());
+        if (data.containsKey(key)) {
+            MCResponse response = (MCResponse) data.get(key);
+            currentValueText.setText(response.getWordValue());
+        }
     }
 }
