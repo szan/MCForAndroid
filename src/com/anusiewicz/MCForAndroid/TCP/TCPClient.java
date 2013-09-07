@@ -7,6 +7,7 @@ package com.anusiewicz.MCForAndroid.TCP;
  * Time: 01:50
  */
 import android.util.Log;
+import com.anusiewicz.MCForAndroid.model.MCResponse;
 import org.apache.http.util.EncodingUtils;
 import java.io.*;
 import java.net.Socket;
@@ -30,7 +31,7 @@ public class TCPClient {
 
     public interface TcpMessageListener{
 
-        public void onReceive();
+        public void onReceive(String request, String response);
     }
 
         public TCPClient(OnTCPConnectionLostListener listener) {
@@ -138,7 +139,7 @@ public class TCPClient {
         Log.i("TCPClient", "Received response: " + message);
         //TODO: put request and response in HashMap
         for (TcpMessageListener listener : listeners) {
-            listener.onReceive();
+            listener.onReceive(request,message);
         }
     }
 
