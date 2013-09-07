@@ -53,7 +53,7 @@ public class MCResponse {
             commandCode = MCCommand.PLC_STOP;
         } else {
             Log.e("MCResponse","Error while parsing response - unknown command");
-            return new MCResponse(null,-1);
+            return null;
         }
 
         String completionString = responseString.substring(2,4);
