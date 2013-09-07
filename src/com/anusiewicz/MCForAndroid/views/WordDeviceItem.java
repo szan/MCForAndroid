@@ -2,6 +2,9 @@ package com.anusiewicz.MCForAndroid.views;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import com.anusiewicz.MCForAndroid.R;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
@@ -15,6 +18,8 @@ import com.anusiewicz.MCForAndroid.model.MCRequest;
  */
 public class WordDeviceItem extends DeviceItem {
 
+    EditText currentValueText;
+
     public WordDeviceItem(Context context, MCDeviceCode deviceCode, int deviceNumber, String deviceName) throws IndexOutOfBoundsException{
         super(context,deviceCode,deviceNumber,deviceName);
 
@@ -23,6 +28,16 @@ public class WordDeviceItem extends DeviceItem {
 
         TextView deviceNameText = (TextView) findViewById(R.id.deviceNameText);
         deviceNameText.setText(deviceName);
+
+        currentValueText = (EditText) findViewById(R.id.currentValueText);
+        Button bEdit = (Button) findViewById(R.id.buttonEdit);
+        bEdit.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentValueText.setEnabled(true);
+            }
+        });
+
     }
 
     @Override

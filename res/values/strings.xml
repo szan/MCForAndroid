@@ -4,4 +4,6 @@
     <string name="device_editor">Device Editor</string>
     <string name="conn_option">Manage Connections</string>
     <string name="exit_option">Exit</string>
+    <string name="add_control">Add Control</string>
+    <string name="edit">Edit</string>
 </resources>
