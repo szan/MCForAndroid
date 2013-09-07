@@ -75,7 +75,7 @@ public class MCResponse {
         }  else if (commandCode == MCCommand.READ_WORD) {
 
             String wordSubstring = responseString.substring(4);
-            wordValue = Integer.parseInt(wordSubstring);
+            wordValue = Integer.parseInt(wordSubstring,16);
 
             return new MCResponse(commandCode,completionCode,wordValue,null);
         }
