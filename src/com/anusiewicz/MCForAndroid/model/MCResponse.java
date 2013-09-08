@@ -45,8 +45,6 @@ public class MCResponse {
             commandCode = MCCommand.WRITE_BIT;
         } else  if (responseString.startsWith("83")) {
             commandCode = MCCommand.WRITE_WORD;
-        }  else  if (responseString.startsWith("84")) {
-            commandCode = MCCommand.READ_WORD;
         } else  if (responseString.startsWith("93")) {
             commandCode = MCCommand.PLC_RUN;
         } else  if (responseString.startsWith("94")) {

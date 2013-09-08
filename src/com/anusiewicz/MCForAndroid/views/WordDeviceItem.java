@@ -47,7 +47,6 @@ public class WordDeviceItem extends DeviceItem {
 
     @Override
     public MCRequest getRequest() {
-
         return new MCRequest(MCCommand.READ_WORD,deviceType,deviceNumber);
     }
 
