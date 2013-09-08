@@ -11,6 +11,11 @@ import com.anusiewicz.MCForAndroid.controllers.ConnectionManager;
 import com.anusiewicz.MCForAndroid.controllers.DeviceFactory;
 import com.anusiewicz.MCForAndroid.model.Constants;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
+import com.anusiewicz.MCForAndroid.model.MCRequest;
+import com.anusiewicz.MCForAndroid.model.MCResponse;
+
+import java.util.HashMap;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,17 +23,19 @@ import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
  */
 public class DeviceControlActivity extends ActivityWithMenu implements ConnectionManager.ConnectionListener, TCPClient.TcpMessageListener {
 
-    TCPClient mTCPClient;
+    private TCPClient mTCPClient;
+    private HashMap <String, MCResponse> receivedData = new HashMap<String, MCResponse>();
+    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ConnectionInfoText infoText;
     private LinearLayout controlsLayout;
     private boolean isConnected;
 
+    private final static int REFRESH_TIME = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_control_layout);
-
         infoText = (ConnectionInfoText) findViewById(R.id.infoText);
         controlsLayout = (LinearLayout) findViewById(R.id.devicesLayout);
         Button bAddControl = (Button) findViewById(R.id.buttonAdd);
@@ -38,16 +45,50 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 DeviceFactory.startDevicePicker(DeviceControlActivity.this);
             }
         });
-
         connectionManager.registerListener(this);
+        executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if (connectionManager.getConnectionStatus() == ConnectionManager.ConnectionStatus.OK) {
-              isConnected = true;
+            isConnected = true;
+            mTCPClient = connectionManager.getTCPClient();
+        }
+        if (executor.isTerminated() || executor.isShutdown()) {
+            executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
+        }
+    }
+
+    private class UpdateItems implements Runnable {
+
+        @Override
+        public void run() {
+           if (isConnected) {
+                for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
+                    final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
+                    DeviceControlActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                        mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getRequest()));
+                        }
+                    });
+                }
+           }
+
         }
     }
 
     @Override
     public void onConnectionEstablished() {
         mTCPClient = connectionManager.getTCPClient();
+        mTCPClient.registerListener(this);
         this.runOnUiThread(new Runnable() {
             public void run() {
                 infoText.update();
@@ -86,10 +127,6 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         isConnected = false;
     }
 
-    @Override
-    public void onReceive() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -102,8 +139,32 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 final Integer number = data.getIntExtra(Constants.DEVICE_NUMBER_TAG, 0);
 
                 controlsLayout.addView(DeviceFactory.createMCDeviceItem(this,code,number,name));
-
             }
+        }
+    }
+
+    @Override
+    public void onReceive(String request,String response) {
+
+        MCResponse mcResponse = MCResponse.parseMCResponseFromString(response);
+        if (request != null && mcResponse != null) {
+        receivedData.put(request,mcResponse);
+        }
+
+        updateControls();
+
+    }
+
+    private void updateControls() {
+
+        for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
+            final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
+            DeviceControlActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    item.updateViewFromData(receivedData);
+                }
+            });
         }
     }
 }
