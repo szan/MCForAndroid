@@ -57,7 +57,7 @@ public class MCResponse {
         }
 
         String completionString = responseString.substring(2,4);
-        completionCode = Integer.getInteger(completionString);
+        completionCode = Integer.parseInt(completionString);
         if (completionCode != 0 ) {
            Log.w("MCResponse","Command " + commandCode + " completed with error: " + completionCode);
            return new MCResponse(commandCode,completionCode);
@@ -83,6 +83,7 @@ public class MCResponse {
         return new MCResponse(commandCode,completionCode);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Log.e("MCResponse","Error while parsing response");
             return null;
         }
