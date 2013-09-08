@@ -3,6 +3,9 @@ package com.anusiewicz.MCForAndroid.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -146,7 +149,11 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 final MCDeviceCode code = (MCDeviceCode) data.getSerializableExtra(Constants.DEVICE_TYPE_TAG);
                 final Integer number = data.getIntExtra(Constants.DEVICE_NUMBER_TAG, 0);
 
-                controlsLayout.addView(DeviceFactory.createMCDeviceItem(this,code,number,name));
+                DeviceItem item = DeviceFactory.createMCDeviceItem(this, code, number, name);
+                item.setId(controlsLayout.getChildCount());
+                controlsLayout.addView(item);
+                registerForContextMenu(item);
+                item.setId(controlsLayout.getChildCount());
             }
         }
     }
@@ -179,5 +186,24 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 });
             }
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        DeviceItem item = (DeviceItem) v;
+        menu.setHeaderTitle(item.getDeviceName() + " (" + item.getDeviceType() + item.getDeviceNumber() +")");
+        menu.add(Menu.NONE,v.getId(),Menu.NONE,"Delete");
+        menu.add(Menu.NONE,v.getId(),Menu.NONE,"Push Value");
+        menu.add(Menu.NONE,v.getId(),Menu.NONE,"Edit");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getTitle() == "Delete" ) {
+            View v = controlsLayout.findViewById(item.getItemId());
+            controlsLayout.removeView(v);
+        }
+        return true;
     }
 }

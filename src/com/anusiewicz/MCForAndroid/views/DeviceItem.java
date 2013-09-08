@@ -15,6 +15,30 @@ import java.util.HashMap;
  */
 public abstract class DeviceItem extends LinearLayout {
 
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public int getDeviceNumber() {
+        return deviceNumber;
+    }
+
+    public void setDeviceNumber(int deviceNumber) {
+        this.deviceNumber = deviceNumber;
+    }
+
+    public MCDeviceCode getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(MCDeviceCode deviceType) {
+        this.deviceType = deviceType;
+    }
+
     protected MCDeviceCode deviceType;
     protected int deviceNumber;
     protected String deviceName;
