@@ -47,6 +47,10 @@ public class TCPClient {
         listeners.add(listener);
     }
 
+    public void unregisterListener(TcpMessageListener listener) {
+        listeners.remove(listener);
+    }
+
     public String getRemoteHost(){
         if (isConnected()){
             return socket.getInetAddress().toString();
@@ -137,7 +141,6 @@ public class TCPClient {
             requestQueue.notify();
         }
         Log.i("TCPClient", "Received response: " + message);
-        //TODO: put request and response in HashMap
         for (TcpMessageListener listener : listeners) {
             listener.onReceive(request,message);
         }

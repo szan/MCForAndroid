@@ -2,6 +2,7 @@ package com.anusiewicz.MCForAndroid.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -47,11 +48,15 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         });
         connectionManager.registerListener(this);
         executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
+        isOnTop = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mTCPClient != null) {
+            mTCPClient.unregisterListener(this);
+        }
         isOnTop = false;
     }
 
@@ -62,11 +67,11 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         if (connectionManager.getConnectionStatus() == ConnectionManager.ConnectionStatus.OK) {
             isConnected = true;
             mTCPClient = connectionManager.getTCPClient();
+            mTCPClient.registerListener(this);
         }
         if (executor.isTerminated() || executor.isShutdown()) {
             executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
         }
-        isOnTop = true;
     }
 
     private class UpdateItems implements Runnable {
@@ -149,6 +154,8 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     @Override
     public void onReceive(String request,String response) {
 
+        Log.i(DeviceControlActivity.class.getName(), "OnReceive");
+
         MCResponse mcResponse = MCResponse.parseMCResponseFromString(response);
         if (request != null && mcResponse != null) {
         receivedData.put(request,mcResponse);
@@ -159,7 +166,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     }
 
     private void updateControls() {
-
+        Log.i(DeviceControlActivity.class.getName(), "OnTop: " + isOnTop + ". Updating controls...");
         if (isOnTop) {
 
             for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
