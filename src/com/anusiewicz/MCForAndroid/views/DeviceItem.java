@@ -31,7 +31,9 @@ public abstract class DeviceItem extends LinearLayout {
         }
     }
 
-    public abstract MCRequest getRequest();
+    public abstract MCRequest getWriteRequest(int value);
+
+    public abstract MCRequest getReadRequest();
 
     public abstract void updateViewFromData(HashMap data);
 

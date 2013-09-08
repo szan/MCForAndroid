@@ -84,7 +84,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                     DeviceControlActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                        mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getRequest()));
+                        mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
                         }
                     });
                 }

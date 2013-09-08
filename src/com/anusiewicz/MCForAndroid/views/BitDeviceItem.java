@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import com.anusiewicz.MCForAndroid.R;
@@ -46,13 +45,21 @@ public class BitDeviceItem extends DeviceItem {
     }
 
     @Override
-    public MCRequest getRequest() {
+    public MCRequest getWriteRequest(int value) {
+
+        boolean bit;
+        bit = value > 0;
+        return new MCRequest(MCCommand.WRITE_BIT,deviceType,deviceNumber,null,bit);
+    }
+
+    @Override
+    public MCRequest getReadRequest() {
         return new MCRequest(MCCommand.READ_BIT,deviceType,deviceNumber);
     }
 
     @Override
     public void updateViewFromData(HashMap data) {
-        String key = MCRequest.generateStringFromRequest(this.getRequest());
+        String key = MCRequest.generateStringFromRequest(this.getReadRequest());
         if (data.containsKey(key)) {
             MCResponse response = (MCResponse) data.get(key);
             if (response.getBitValue() != null) {

@@ -46,13 +46,19 @@ public class WordDeviceItem extends DeviceItem {
     }
 
     @Override
-    public MCRequest getRequest() {
+    public MCRequest getReadRequest() {
         return new MCRequest(MCCommand.READ_WORD,deviceType,deviceNumber);
     }
 
     @Override
+    public MCRequest getWriteRequest(int value) {
+
+        return new MCRequest(MCCommand.WRITE_WORD,deviceType,deviceNumber,value,null);
+    }
+
+    @Override
     public void updateViewFromData(HashMap data) {
-        String key = MCRequest.generateStringFromRequest(this.getRequest());
+        String key = MCRequest.generateStringFromRequest(this.getReadRequest());
         if (data.containsKey(key)) {
             MCResponse response = (MCResponse) data.get(key);
             if (response.getWordValue() != null) {
