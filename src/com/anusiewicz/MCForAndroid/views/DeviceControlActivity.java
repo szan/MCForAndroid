@@ -1,14 +1,18 @@
 package com.anusiewicz.MCForAndroid.views;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.TransformationMethod;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
 import com.anusiewicz.MCForAndroid.TCP.TCPClient;
 import com.anusiewicz.MCForAndroid.controllers.ConnectionManager;
@@ -34,7 +38,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     private LinearLayout controlsLayout;
     private boolean isConnected, isOnTop;
 
-    private final static int REFRESH_TIME = 5;
+    private final static int REFRESH_TIME = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,9 +197,9 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         super.onCreateContextMenu(menu, v, menuInfo);
         DeviceItem item = (DeviceItem) v;
         menu.setHeaderTitle(item.getDeviceName() + " (" + item.getDeviceType() + item.getDeviceNumber() +")");
-        menu.add(Menu.NONE,v.getId(),Menu.NONE,"Delete");
+        menu.add(Menu.NONE, v.getId(), Menu.NONE, "Delete");
         menu.add(Menu.NONE,v.getId(),Menu.NONE,"Push Value");
-        menu.add(Menu.NONE,v.getId(),Menu.NONE,"Edit");
+        //menu.add(Menu.NONE,v.getId(),Menu.NONE,"Edit");
     }
 
     @Override
@@ -203,7 +207,76 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         if (item.getTitle() == "Delete" ) {
             View v = controlsLayout.findViewById(item.getItemId());
             controlsLayout.removeView(v);
+        } else if (item.getTitle() == "Push Value" ) {
+            DeviceItem v = (DeviceItem) controlsLayout.findViewById(item.getItemId());
+            new PushDialog(v).showDialog();
         }
         return true;
+    }
+
+
+    private class PushDialog extends AlertDialog {
+
+        private AlertDialog.Builder builder;
+        private Integer pushValue;
+        EditText editText = null;
+
+        public PushDialog(final DeviceItem item) {
+            super(DeviceControlActivity.this);
+
+            builder = new AlertDialog.Builder(DeviceControlActivity.this);
+            // Set the dialog title
+            builder.setTitle(item.getDeviceName() + " (" + item.getDeviceType() + item.getDeviceNumber() + ")")
+
+                   .setPositiveButton("Push", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int id) {
+
+                           if (editText != null) {
+                               try {
+                                   pushValue = Integer.parseInt(editText.getText().toString());
+                               } catch (NumberFormatException e) {
+                                   e.printStackTrace();
+                                   Toast.makeText(getContext(),"Can't write this value",Toast.LENGTH_SHORT).show();
+                               }
+                           }
+                           if (pushValue == null || !isConnected) {
+                               return;
+                           }
+                           mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getWriteRequest(pushValue)));
+                           mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
+                       }
+                   })
+                   .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int id) {
+                           dialog.dismiss();
+                       }
+                   });
+
+            if (MCDeviceCode.bitDevices().contains(item.getDeviceType())) {
+
+                CharSequence[] strings = new CharSequence[2];
+                strings[0] = "OFF";
+                strings[1] = "ON";
+                builder.setSingleChoiceItems(strings, 0 , new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       pushValue = i;
+                    }
+                });
+            } else if (MCDeviceCode.wordDevices().contains(item.getDeviceType())) {
+
+                editText = new EditText(getContext());
+                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
+                builder.setView(editText);
+
+            }
+
+
+        }
+        public void showDialog() {
+            builder.create().show();
+        }
     }
 }
