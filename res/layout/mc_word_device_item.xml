@@ -12,13 +12,14 @@
                 android:id="@+id/deviceNameText"
                 android:layout_gravity="left|center_vertical"
                 android:textSize="@dimen/NormalTextSize"
-                android:layout_weight="4" android:textStyle="bold"/>
+                android:layout_weight="4" android:textStyle="bold" android:focusable="false"/>
         <EditText
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/currentValueText"
                 android:editable="false"
                 android:enabled="false"
+                android:focusable="false"
                 android:inputType="number" android:layout_weight="4" android:text="0"/>
         <Button
                 android:layout_width="0dp"

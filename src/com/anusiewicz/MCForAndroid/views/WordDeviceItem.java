@@ -32,7 +32,7 @@ public class WordDeviceItem extends DeviceItem {
         inflater.inflate(R.layout.mc_word_device_item, this, true);
 
         TextView deviceNameText = (TextView) findViewById(R.id.deviceNameText);
-        deviceNameText.setText(deviceName);
+        deviceNameText.setText(deviceName + ":");
 
         currentValueText = (EditText) findViewById(R.id.currentValueText);
         Button bEdit = (Button) findViewById(R.id.buttonEdit);
@@ -42,7 +42,6 @@ public class WordDeviceItem extends DeviceItem {
                 currentValueText.setEnabled(true);
             }
         });
-
     }
 
     @Override
@@ -62,7 +61,6 @@ public class WordDeviceItem extends DeviceItem {
         if (data.containsKey(key)) {
             MCResponse response = (MCResponse) data.get(key);
             if (response.getWordValue() != null) {
-                Log.i("WordDeviceItem", "Setting " + this.deviceType + this.deviceNumber + " to " + response.getWordValue());
                 currentValueText.setText(response.getWordValue().toString());
             }
         }

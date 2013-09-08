@@ -31,7 +31,7 @@ public class BitDeviceItem extends DeviceItem {
         inflater.inflate(R.layout.mc_bit_device_item, this, true);
 
         TextView deviceNameText = (TextView) findViewById(R.id.deviceNameText);
-        deviceNameText.setText(deviceName);
+        deviceNameText.setText(deviceName + ":");
 
 
         currentValueBit = (ToggleButton) findViewById(R.id.currentValueBit);
