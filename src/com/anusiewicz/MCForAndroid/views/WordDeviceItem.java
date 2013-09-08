@@ -1,6 +1,7 @@
 package com.anusiewicz.MCForAndroid.views;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -55,7 +56,10 @@ public class WordDeviceItem extends DeviceItem {
         String key = MCRequest.generateStringFromRequest(this.getRequest());
         if (data.containsKey(key)) {
             MCResponse response = (MCResponse) data.get(key);
-            currentValueText.setText(response.getWordValue());
+            if (response.getWordValue() != null) {
+                Log.i("WordDeviceItem", "Setting " + this.deviceType + this.deviceNumber + " to " + response.getWordValue());
+                currentValueText.setText(response.getWordValue().toString());
+            }
         }
     }
 }

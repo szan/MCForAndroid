@@ -55,7 +55,9 @@ public class BitDeviceItem extends DeviceItem {
         String key = MCRequest.generateStringFromRequest(this.getRequest());
         if (data.containsKey(key)) {
             MCResponse response = (MCResponse) data.get(key);
-            currentValueBit.setChecked(response.getBitValue());
+            if (response.getBitValue() != null) {
+                currentValueBit.setChecked(response.getBitValue());
+            }
         }
     }
 }
