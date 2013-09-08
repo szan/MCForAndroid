@@ -28,7 +28,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
     private ConnectionInfoText infoText;
     private LinearLayout controlsLayout;
-    private boolean isConnected;
+    private boolean isConnected, isOnTop;
 
     private final static int REFRESH_TIME = 5;
 
@@ -52,11 +52,13 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     @Override
     protected void onPause() {
         super.onPause();
+        isOnTop = false;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        isOnTop = true;
         if (connectionManager.getConnectionStatus() == ConnectionManager.ConnectionStatus.OK) {
             isConnected = true;
             mTCPClient = connectionManager.getTCPClient();
@@ -64,13 +66,14 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         if (executor.isTerminated() || executor.isShutdown()) {
             executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
         }
+        isOnTop = true;
     }
 
     private class UpdateItems implements Runnable {
 
         @Override
         public void run() {
-           if (isConnected) {
+           if (isConnected && isOnTop) {
                 for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
                     final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
                     DeviceControlActivity.this.runOnUiThread(new Runnable() {
@@ -157,14 +160,17 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
 
     private void updateControls() {
 
-        for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
-            final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
-            DeviceControlActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    item.updateViewFromData(receivedData);
-                }
-            });
+        if (isOnTop) {
+
+            for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
+                final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
+                DeviceControlActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                       item.updateViewFromData(receivedData);
+                    }
+                });
+            }
         }
     }
 }
