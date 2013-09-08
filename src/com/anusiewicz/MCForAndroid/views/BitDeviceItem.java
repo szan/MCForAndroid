@@ -35,13 +35,8 @@ public class BitDeviceItem extends DeviceItem {
 
 
         currentValueBit = (ToggleButton) findViewById(R.id.currentValueBit);
-        Button bEdit = (Button) findViewById(R.id.buttonEdit);
-        bEdit.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentValueBit.setEnabled(true);
-            }
-        });
+        currentValueBit.setTextOff("OFF");
+        currentValueBit.setTextOn("ON");
     }
 
     @Override

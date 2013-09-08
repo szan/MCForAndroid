@@ -35,13 +35,6 @@ public class WordDeviceItem extends DeviceItem {
         deviceNameText.setText(deviceName + ":");
 
         currentValueText = (EditText) findViewById(R.id.currentValueText);
-        Button bEdit = (Button) findViewById(R.id.buttonEdit);
-        bEdit.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentValueText.setEnabled(true);
-            }
-        });
     }
 
     @Override

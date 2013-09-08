@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content" android:paddingBottom="10dp" android:weightSum="10">
+              android:layout_height="60dp" android:paddingBottom="10dp" android:weightSum="10">
 
     <TextView
             android:layout_width="0dp"
@@ -11,24 +11,18 @@
             android:text="Device name:"
             android:id="@+id/deviceNameText"
             android:layout_gravity="left|center_vertical"
-            android:textSize="@dimen/NormalTextSize"
-            android:layout_weight="4" android:textStyle="bold"/>
+            android:textSize="24sp"
+            android:layout_weight="5"/>
 
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="4">
+            android:layout_weight="5">
         <ToggleButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="fill_parent"
                 android:id="@+id/currentValueBit"
                 android:enabled="false" android:layout_gravity="center_horizontal"/>
     </LinearLayout>
-    <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/edit"
-            android:layout_gravity="center_vertical"
-            android:id="@+id/buttonEdit" android:layout_weight="2"/>
 </LinearLayout>
