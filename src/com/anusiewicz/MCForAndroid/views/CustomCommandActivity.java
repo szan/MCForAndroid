@@ -1,18 +1,16 @@
-package com.anusiewicz.MCForAndroid.controllers;
+package com.anusiewicz.MCForAndroid.views;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
-import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.controllers.TCPClient;
+import com.anusiewicz.MCForAndroid.controllers.ConnectionManager;
 import com.anusiewicz.MCForAndroid.model.Constants;
 import com.anusiewicz.MCForAndroid.model.MCCommand;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
-import com.anusiewicz.MCForAndroid.views.ActivityWithMenu;
-import com.anusiewicz.MCForAndroid.views.ConnectionInfoText;
-import com.anusiewicz.MCForAndroid.views.DeviceEditorActivity;
 
 public class CustomCommandActivity extends ActivityWithMenu implements TCPClient.TcpMessageListener,ConnectionManager.ConnectionListener {
 
@@ -90,8 +88,8 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
         bPick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(CustomCommandActivity.this, DeviceEditorActivity.class);
-                startActivityForResult(i, 1);
+                Intent i = new Intent(CustomCommandActivity.this, DeviceControlActivity.class);
+                startActivity(i);
             }
         });
 
@@ -214,11 +212,6 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
     }
 
     @Override
-    public void onReceive() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
@@ -236,5 +229,10 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
 
             }
         }
+    }
+
+    @Override
+    public void onReceive(String request, String response) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

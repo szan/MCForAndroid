@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.anusiewicz.MCForAndroid.TCP.TCPClient;
 import com.anusiewicz.MCForAndroid.views.ConnectionActivity;
 
 import java.util.ArrayList;

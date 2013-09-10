@@ -13,6 +13,7 @@ public class MCForAndroidApplication extends Application {
 
     private static final MCForAndroidApplication INSTANCE = new MCForAndroidApplication();
     private static final ConnectionManager mConnectionManager = new ConnectionManager();
+
     public static Context getAppContext() {
             return INSTANCE;
     }
@@ -20,8 +21,6 @@ public class MCForAndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //mConnectionManager = new ConnectionManager();
-
     }
 
     public static ConnectionManager getConnectionManager() {

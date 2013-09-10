@@ -1,4 +1,4 @@
-package com.anusiewicz.MCForAndroid.TCP;
+package com.anusiewicz.MCForAndroid.controllers;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,6 @@ package com.anusiewicz.MCForAndroid.TCP;
  * Time: 01:50
  */
 import android.util.Log;
-import com.anusiewicz.MCForAndroid.model.MCResponse;
 import org.apache.http.util.EncodingUtils;
 import java.io.*;
 import java.net.Socket;

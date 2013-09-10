@@ -1,12 +1,10 @@
 package com.anusiewicz.MCForAndroid.views;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.method.TransformationMethod;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -14,7 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
-import com.anusiewicz.MCForAndroid.TCP.TCPClient;
+import com.anusiewicz.MCForAndroid.controllers.TCPClient;
 import com.anusiewicz.MCForAndroid.controllers.ConnectionManager;
 import com.anusiewicz.MCForAndroid.controllers.DeviceFactory;
 import com.anusiewicz.MCForAndroid.model.Constants;
