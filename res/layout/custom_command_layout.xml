@@ -28,11 +28,11 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="fill_parent">
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="wrap_content">
             <EditText
                     android:layout_width="102dp"
                     android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ON/OFF"
-                    android:id="@+id/checkBox" android:layout_gravity="center"/>
+                    android:id="@+id/checkBox"/>
         </LinearLayout>
         <Button
                 android:layout_width="187dp"
@@ -62,18 +62,13 @@
                 android:id="@+id/buttonSend" android:layout_gravity="center_horizontal" android:textStyle="bold"/>
         <EditText
                 android:layout_width="fill_parent"
-                android:layout_height="100dp"
+                android:layout_height="fill_parent"
                 android:id="@+id/editResponse" android:gravity="left|top"/>
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" android:weightSum="2">
-        <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Pick Device"
-                android:id="@+id/buttonPick" android:layout_weight="1" android:layout_gravity="bottom"/>
     </LinearLayout>
 </LinearLayout>
 

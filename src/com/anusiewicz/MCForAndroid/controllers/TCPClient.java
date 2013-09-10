@@ -43,10 +43,12 @@ public class TCPClient {
     }
 
     public void registerListener(TcpMessageListener listener) {
+        Log.i(TCPClient.class.getName(), "Registering listener: " + listener);
         listeners.add(listener);
     }
 
     public void unregisterListener(TcpMessageListener listener) {
+        Log.i(TCPClient.class.getName(), "Unregistering listener: " + listener);
         listeners.remove(listener);
     }
 

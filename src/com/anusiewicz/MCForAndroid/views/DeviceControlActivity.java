@@ -59,6 +59,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     @Override
     protected void onPause() {
         super.onPause();
+        Log.i(DeviceControlActivity.class.getName(), "OnPause");
         if (mTCPClient != null) {
             mTCPClient.unregisterListener(this);
         }
@@ -101,7 +102,6 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     @Override
     public void onConnectionEstablished() {
         mTCPClient = connectionManager.getTCPClient();
-        mTCPClient.registerListener(this);
         this.runOnUiThread(new Runnable() {
             public void run() {
                 infoText.update();

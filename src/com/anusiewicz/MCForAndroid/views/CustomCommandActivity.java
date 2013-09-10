@@ -84,15 +84,6 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
 
         deviceSpinner.setAdapter(new ArrayAdapter<MCDeviceCode>(this, android.R.layout.simple_spinner_item, MCDeviceCode.values()));
 
-        Button bPick = (Button) findViewById(R.id.buttonPick);
-        bPick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(CustomCommandActivity.this, DeviceControlActivity.class);
-                startActivity(i);
-            }
-        });
-
         Button bSend = (Button) findViewById(R.id.buttonSend);
         bSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,18 +148,25 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // disconnect
-        if (mTCPClient != null) {
-            mTCPClient.disconnect();
-            mTCPClient = null;
-            isConnected = false;
-        }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (connectionManager.getConnectionStatus() == ConnectionManager.ConnectionStatus.OK) {
+            isConnected = true;
+            mTCPClient = connectionManager.getTCPClient();
+            mTCPClient.registerListener(this);
+        }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mTCPClient != null) {
+            mTCPClient.unregisterListener(this);
+            isConnected = false;
+        }
+    }
 
     @Override
     public void onConnectionEstablished() {
@@ -232,7 +230,12 @@ public class CustomCommandActivity extends ActivityWithMenu implements TCPClient
     }
 
     @Override
-    public void onReceive(String request, String response) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void onReceive(String request, final String response) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                responseText.setText(response);
+            }
+        });
     }
 }

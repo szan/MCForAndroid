@@ -3,7 +3,7 @@
     <string name="app_name">MCForAndroid</string>
     <string name="device_editor">Device Editor</string>
     <string name="conn_option">Manage Connections</string>
-    <string name="exit_option">Exit</string>
+    <string name="exit_option">Main Menu</string>
     <string name="add_control">Add Control</string>
     <string name="edit">Edit</string>
     <string name="app_title">MCForAndroid</string>
