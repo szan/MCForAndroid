@@ -48,6 +48,8 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+
         setContentView(R.layout.device_control_layout);
         infoText = (ConnectionInfoText) findViewById(R.id.infoText);
         controlsLayout = (LinearLayout) findViewById(R.id.devicesLayout);
@@ -69,15 +71,21 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         });
 
         titleText = (TextView) findViewById(R.id.titleTextView);
+        refreshTime = DEFAULT_REFRESH_TIME;
+
+        if (intent.hasExtra(Constants.TITLE_TAG)) {
+            initiateFromFile(intent.getExtras().getString(Constants.TITLE_TAG));
+        }
+
         connectionManager.registerListener(this);
-        executor.scheduleAtFixedRate(new UpdateItems(),0,DEFAULT_REFRESH_TIME, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(new UpdateItems(),0,refreshTime, TimeUnit.SECONDS);
         isOnTop = true;
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.i(DeviceControlActivity.class.getName(), "OnPause");
         if (mTCPClient != null) {
             mTCPClient.unregisterListener(this);
         }
@@ -173,7 +181,6 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 item.setId(controlsLayout.getChildCount());
                 controlsLayout.addView(item);
                 registerForContextMenu(item);
-                item.setId(controlsLayout.getChildCount());
             }
         }
     }
@@ -234,6 +241,37 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
 
     private void initiateFromFile(String fileName) {
 
+        String data = FileUtils.readFromFile(Constants.FILES_DIRECTORY + fileName);
+
+        try {
+            JSONObject screenObject = new JSONObject(data);
+            titleText.setText(screenObject.getString(Constants.TITLE_TAG));
+
+            int time = screenObject.getInt(Constants.REFRESH_TIME_TAG);
+            if (time <= 0) {
+                refreshTime = DEFAULT_REFRESH_TIME;
+            } else {
+                refreshTime = time;
+            }
+
+            JSONArray devices = screenObject.getJSONArray(Constants.DEVICES_TAG);
+
+            for (int i = 0; i < devices.length(); i++) {
+                JSONObject item = devices.getJSONObject(i);
+
+                String name = item.getString(Constants.DEVICE_NAME_TAG);
+                MCDeviceCode code = MCDeviceCode.parseString(item.getString(Constants.DEVICE_TYPE_TAG));
+                int number = item.getInt(Constants.DEVICE_NUMBER_TAG);
+
+                DeviceItem deviceItem = DeviceFactory.createMCDeviceItem(this, code, number, name);
+                deviceItem.setId(controlsLayout.getChildCount());
+                controlsLayout.addView(deviceItem);
+                registerForContextMenu(deviceItem);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 

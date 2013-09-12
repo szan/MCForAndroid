@@ -58,4 +58,21 @@ public enum MCDeviceCode {
 
         return wordDevices;
     }
+
+    public static MCDeviceCode parseString(String string) {
+
+        for (MCDeviceCode code : bitDevices()) {
+            if (string.equals(code.toString())) {
+                return code;
+            }
+        }
+
+        for (MCDeviceCode code : wordDevices()) {
+            if (string.equals(code.toString())) {
+                return code;
+            }
+        }
+
+        return null;
+    }
 }

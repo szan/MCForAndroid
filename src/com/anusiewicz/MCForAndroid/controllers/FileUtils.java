@@ -30,7 +30,7 @@ public class FileUtils {
     }
 
 
-    private static String readFromFile(String path) {
+    public static String readFromFile(String path) {
 
         String ret = null;
 
