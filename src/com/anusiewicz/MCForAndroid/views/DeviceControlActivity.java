@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
+import com.anusiewicz.MCForAndroid.controllers.FileUtils;
 import com.anusiewicz.MCForAndroid.controllers.TCPClient;
 import com.anusiewicz.MCForAndroid.controllers.ConnectionManager;
 import com.anusiewicz.MCForAndroid.controllers.DeviceFactory;
@@ -19,7 +20,12 @@ import com.anusiewicz.MCForAndroid.model.Constants;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 import com.anusiewicz.MCForAndroid.model.MCRequest;
 import com.anusiewicz.MCForAndroid.model.MCResponse;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.concurrent.*;
 
@@ -35,8 +41,9 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
     private ConnectionInfoText infoText;
     private LinearLayout controlsLayout;
     private boolean isConnected, isOnTop;
-
-    private final static int REFRESH_TIME = 2;
+    private int refreshTime;
+    private TextView titleText;
+    private final static int DEFAULT_REFRESH_TIME = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +51,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
         setContentView(R.layout.device_control_layout);
         infoText = (ConnectionInfoText) findViewById(R.id.infoText);
         controlsLayout = (LinearLayout) findViewById(R.id.devicesLayout);
+
         Button bAddControl = (Button) findViewById(R.id.buttonAdd);
         bAddControl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,8 +59,18 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 DeviceFactory.startDevicePicker(DeviceControlActivity.this);
             }
         });
+
+        Button bSave = (Button) findViewById(R.id.buttonSave);
+        bSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveToFile();
+            }
+        });
+
+        titleText = (TextView) findViewById(R.id.titleTextView);
         connectionManager.registerListener(this);
-        executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(new UpdateItems(),0,DEFAULT_REFRESH_TIME, TimeUnit.SECONDS);
         isOnTop = true;
     }
 
@@ -76,7 +94,7 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
             mTCPClient.registerListener(this);
         }
         if (executor.isTerminated() || executor.isShutdown()) {
-            executor.scheduleAtFixedRate(new UpdateItems(),0,REFRESH_TIME, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(new UpdateItems(),0,DEFAULT_REFRESH_TIME, TimeUnit.SECONDS);
         }
     }
 
@@ -210,6 +228,39 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
             new PushDialog(v).showDialog();
         }
         return true;
+    }
+
+
+
+    private void initiateFromFile(String fileName) {
+
+
+    }
+
+    private boolean saveToFile() {
+
+        JSONObject screenObject = new JSONObject();
+        try {
+            screenObject.put(Constants.TITLE_TAG, titleText.getText());
+            screenObject.put(Constants.REFRESH_TIME_TAG, refreshTime);
+            JSONArray devices = new JSONArray();
+
+            for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
+                final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
+                JSONObject device = new JSONObject();
+                device.put(Constants.DEVICE_NAME_TAG,item.getDeviceName());
+                device.put(Constants.DEVICE_TYPE_TAG, item.getDeviceType());
+                device.put(Constants.DEVICE_NUMBER_TAG,item.getDeviceNumber());
+                devices.put(device);
+            }
+            screenObject.put(Constants.DEVICES_TAG, devices);
+
+            return FileUtils.writeToFile(screenObject.toString(),Constants.FILES_DIRECTORY + titleText.getText());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 
