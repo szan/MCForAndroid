@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.anusiewicz.MCForAndroid.R;
+import com.anusiewicz.MCForAndroid.model.Constants;
 import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
 
 /**
@@ -15,9 +16,6 @@ import com.anusiewicz.MCForAndroid.model.MCDeviceCode;
  */
 public class DeviceEditorActivity extends Activity {
 
-    private static final String DEVICE_NAME_TAG = "device_name";
-    private static final String DEVICE_TYPE_TAG = "device_type";
-    private static final String DEVICE_NUMBER_TAG = "device_number";
     private static final String TAG = "DeviceEditorActivity";
 
     private MCDeviceCode deviceType;
@@ -61,7 +59,7 @@ public class DeviceEditorActivity extends Activity {
                     return;
                 }
 
-                Integer devNum = null;
+                Integer devNum;
 
                 try {
                     devNum = new Integer(deviceNumberText.getText().toString());
@@ -77,22 +75,12 @@ public class DeviceEditorActivity extends Activity {
                 }
 
                 Intent i = new Intent();
-                i.putExtra(DEVICE_TYPE_TAG, deviceType);
-                i.putExtra(DEVICE_NAME_TAG,deviceName);
-                i.putExtra(DEVICE_NUMBER_TAG,devNum);
+                i.putExtra(Constants.DEVICE_TYPE_TAG, deviceType);
+                i.putExtra(Constants.DEVICE_NAME_TAG,deviceName);
+                i.putExtra(Constants.DEVICE_NUMBER_TAG,devNum);
                 setResult(RESULT_OK,i);
                 finish();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
     }
 }
