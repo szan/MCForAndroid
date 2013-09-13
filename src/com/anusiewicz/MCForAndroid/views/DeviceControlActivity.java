@@ -116,15 +116,10 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
 
         @Override
         public void run() {
-           if (isConnected && isOnTop) {
+            if (isConnected && isOnTop) {
                 for ( int i = 0 ; i < controlsLayout.getChildCount(); i++ ) {
                     final DeviceItem item = (DeviceItem) controlsLayout.getChildAt(i);
-                    DeviceControlActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                        mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
-                        }
-                    });
+                    mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
                 }
            }
 

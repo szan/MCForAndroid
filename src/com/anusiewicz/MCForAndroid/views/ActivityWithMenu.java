@@ -1,6 +1,7 @@
 package com.anusiewicz.MCForAndroid.views;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,7 +30,7 @@ public class ActivityWithMenu extends Activity {
     public boolean onOptionsItemSelected(MenuItem item)
     {
         if(item.getItemId() == R.id.menu_item_exit){
-            connectionManager.disconnectFromRemoteHost();
+            //connectionManager.disconnectFromRemoteHost();
             this.finish();
             return true;
         } else if (item.getItemId() == R.id.menu_item_conn) {
