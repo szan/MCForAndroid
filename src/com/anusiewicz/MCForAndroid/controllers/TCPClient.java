@@ -16,6 +16,8 @@ import java.util.List;
 
 public class TCPClient {
 
+    private final int MAX_QUEUE_SIZE = 50;
+
     private Socket socket = null;
     private PrintWriter out = null;
     private BufferedReader in = null;
@@ -198,7 +200,11 @@ public class TCPClient {
     }
 
     public void enqueueRequest(String request) {
-        requestQueue.add(request);
+
+        if (requestQueue.size() >= MAX_QUEUE_SIZE)  {
+            requestQueue.add(request);
+        }
+        else return;
     }
 
     public String peekQueue() {
