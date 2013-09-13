@@ -8,4 +8,8 @@
     <string name="edit">Edit</string>
     <string name="app_title">MCForAndroid</string>
     <string name="save_string">Save</string>
+    <string name="name">Name:</string>
+    <string name="refresh_time">Refresh time:</string>
+    <string name="new_screen">New Screen:</string>
+    <string name="create">Create</string>
 </resources>

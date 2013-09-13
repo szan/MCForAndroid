@@ -16,7 +16,7 @@ import com.anusiewicz.MCForAndroid.controllers.MCForAndroidApplication;
 public class MenuActivity  extends Activity implements View.OnClickListener {
 
 
-    private Button bConnection, bCustomCommand, bControlScreen, bExit;
+    private Button bConnection, bCustomCommand, bControlScreen, bNewScreen, bExit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +27,10 @@ public class MenuActivity  extends Activity implements View.OnClickListener {
         bConnection.setOnClickListener(this);
         bCustomCommand = (Button) findViewById(R.id.buttonCustom);
         bCustomCommand.setOnClickListener(this);
-        bControlScreen = (Button) findViewById(R.id.buttonControlScreen);
+        bControlScreen = (Button) findViewById(R.id.buttonControlScreens);
         bControlScreen.setOnClickListener(this);
+        bNewScreen = (Button) findViewById(R.id.buttonNewScreen);
+        bNewScreen.setOnClickListener(this);
         bExit = (Button) findViewById(R.id.buttonExit);
         bExit.setOnClickListener(this);
     }
@@ -50,9 +52,13 @@ public class MenuActivity  extends Activity implements View.OnClickListener {
                 Intent i = new Intent(this,CustomCommandActivity.class);
                 startActivity(i);
                 break;
-            case R.id.buttonControlScreen:
-                Intent j = new Intent(this,DeviceControlActivity.class);
+            case R.id.buttonControlScreens:
+                Intent j = new Intent(this,ScreenListActivity.class);
                 startActivity(j);
+                break;
+            case R.id.buttonNewScreen:
+                Intent k = new Intent(this,NewScreenActivity.class);
+                startActivity(k);
                 break;
             case R.id.buttonExit:
                 finish();

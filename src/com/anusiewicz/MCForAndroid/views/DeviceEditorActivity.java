@@ -43,11 +43,8 @@ public class DeviceEditorActivity extends Activity {
             public void onClick(View view) {
 
                 deviceName = deviceNameText.getText().toString();
-                Log.i(TAG, deviceName);
                 deviceNumber = deviceNumberText.getText().toString();
-                Log.i(TAG, deviceNumber);
                 deviceType = (MCDeviceCode) deviceSpinner.getSelectedItem();
-                Log.i(TAG, deviceType.name());
 
                 if (deviceName.matches("")) {
                     Toast.makeText(DeviceEditorActivity.this,"Specify device name", Toast.LENGTH_SHORT).show();

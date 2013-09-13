@@ -77,7 +77,13 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
             initiateFromFile(intent.getExtras().getString(Constants.TITLE_TAG));
         }
 
+        if (intent.hasExtra(Constants.SCREEN_NAME_TAG)) {
+            titleText.setText(intent.getExtras().getString(Constants.SCREEN_NAME_TAG));
+            refreshTime = intent.getExtras().getInt(Constants.REFRESH_TIME_TAG);
+        }
+
         connectionManager.registerListener(this);
+        Log.i(DeviceControlActivity.this.getClass().getName(),"Scheduling refresh at fixed rate: " + refreshTime + " seconds");
         executor.scheduleAtFixedRate(new UpdateItems(),0,refreshTime, TimeUnit.SECONDS);
         isOnTop = true;
 

@@ -13,25 +13,29 @@
             android:textSize="30dp" android:textStyle="bold" android:typeface="monospace" android:paddingTop="20dp"
             android:paddingBottom="30dp"/>
     <Button
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:text="Connection"
             android:id="@+id/buttonConnection" android:layout_gravity="center" android:textStyle="bold"
             android:textSize="@dimen/NormalTextSize" android:layout_marginBottom="20dp"/>
     <Button
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:text="Custom Comand"
             android:id="@+id/buttonCustom" android:layout_gravity="center" android:textStyle="bold"
             android:textSize="@dimen/NormalTextSize" android:layout_marginBottom="20dp"/>
     <Button
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:text="Control Screen"
-            android:id="@+id/buttonControlScreen" android:layout_gravity="center" android:textStyle="bold"
+            android:text="Control Screens"
+            android:id="@+id/buttonControlScreens" android:layout_gravity="center" android:textStyle="bold"
             android:textSize="@dimen/NormalTextSize" android:layout_marginBottom="20dp"/>
+    <Button android:layout_width="220dp" android:layout_height="wrap_content" android:text="New Control Screen"
+            android:id="@+id/buttonNewScreen" android:textStyle="bold"
+            android:textSize="@dimen/NormalTextSize" android:layout_marginBottom="20dp"
+            android:layout_gravity="center"/>
     <Button
-            android:layout_width="200dp"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
             android:text="Exit"
             android:id="@+id/buttonExit" android:layout_gravity="center" android:textStyle="bold"
