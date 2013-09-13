@@ -162,7 +162,7 @@ public class TCPClient {
             byte[] b = EncodingUtils.getAsciiBytes(msg);
             try {
                 dos.write(b);
-                Log.i("TCP", "Sending: " + b);
+                Log.i("TCPClient", "Sending: " + b);
                 dos.flush();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -201,10 +201,14 @@ public class TCPClient {
 
     public void enqueueRequest(String request) {
 
-        if (requestQueue.size() >= MAX_QUEUE_SIZE)  {
+        Log.i("TCP", "Request Queue size: " + requestQueue.size());
+        if (requestQueue.size() <= MAX_QUEUE_SIZE)  {
             requestQueue.add(request);
         }
-        else return;
+        else {
+            clearQueue();
+            return;
+        }
     }
 
     public String peekQueue() {
