@@ -211,6 +211,10 @@ public class TCPClient {
         }
     }
 
+    public void prioritizeRequest(String request) {
+        requestQueue.addFirst(request);
+    }
+
     public String peekQueue() {
         return requestQueue.peek();
     }

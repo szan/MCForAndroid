@@ -331,8 +331,8 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                            if (pushValue == null || !isConnected) {
                                return;
                            }
-                           mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getWriteRequest(pushValue)));
-                           mTCPClient.enqueueRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
+                           mTCPClient.prioritizeRequest(MCRequest.generateStringFromRequest(item.getWriteRequest(pushValue)));
+                           mTCPClient.prioritizeRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
                        }
                    })
                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -348,11 +348,14 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                 strings[0] = "OFF";
                 strings[1] = "ON";
                 builder.setSingleChoiceItems(strings, 0 , new OnClickListener() {
+
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                        pushValue = i;
                     }
                 });
+
+                pushValue = 0;
             } else if (MCDeviceCode.wordDevices().contains(item.getDeviceType())) {
 
                 editText = new EditText(getContext());
