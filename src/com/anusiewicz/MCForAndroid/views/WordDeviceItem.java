@@ -45,7 +45,15 @@ public class WordDeviceItem extends DeviceItem {
     @Override
     public MCRequest getWriteRequest(int value) {
 
-        return new MCRequest(MCCommand.WRITE_WORD,deviceType,deviceNumber,value,null);
+        MCRequest ret;
+
+        try {
+            ret = new MCRequest(MCCommand.WRITE_WORD,deviceType,deviceNumber,value,null);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+            ret = null;
+        }
+        return ret;
     }
 
     @Override

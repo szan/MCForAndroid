@@ -8,6 +8,8 @@ package com.anusiewicz.MCForAndroid.model;
  */
 public class MCRequest {
 
+    private static final int MAX_INT = 32767;
+    private static final int MIN_INT = -32768;
     private MCCommand command;
     private MCDeviceCode deviceType;
     private Integer deviceNumber;
@@ -50,7 +52,11 @@ public class MCRequest {
                 this.bitValue = null;
 
             }   else if (command.equals(MCCommand.WRITE_WORD)) {
-                this.wordValue = word;
+                if (word >= MIN_INT && word<=MAX_INT) {
+                    this.wordValue = word;
+                } else {
+                    throw new IndexOutOfBoundsException("Specified value exceeds the valid range");
+                }
                 this.bitValue = null;
             }   else if (command.equals(MCCommand.WRITE_BIT)) {
                 this.wordValue = null;

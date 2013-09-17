@@ -331,7 +331,14 @@ public class DeviceControlActivity extends ActivityWithMenu implements Connectio
                            if (pushValue == null || !isConnected) {
                                return;
                            }
-                           mTCPClient.prioritizeRequest(MCRequest.generateStringFromRequest(item.getWriteRequest(pushValue)));
+
+                           MCRequest request = item.getWriteRequest(pushValue);
+                           if (request == null) {
+                               Toast.makeText(DeviceControlActivity.this, "Specified value exceeds the valid range",Toast.LENGTH_SHORT).show();
+                               return;
+                           }
+
+                           mTCPClient.prioritizeRequest(MCRequest.generateStringFromRequest(request));
                            mTCPClient.prioritizeRequest(MCRequest.generateStringFromRequest(item.getReadRequest()));
                        }
                    })
