@@ -1,5 +1,7 @@
 package com.anusiewicz.MCForAndroid.model;
 
+import android.util.Log;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
@@ -8,8 +10,9 @@ package com.anusiewicz.MCForAndroid.model;
  */
 public class MCRequest {
 
-    private static final int MAX_INT = 32767;
-    private static final int MIN_INT = -32768;
+    public static final int MAX_INT = 32767;
+    public static final int MIN_INT = -32768;
+
     private MCCommand command;
     private MCDeviceCode deviceType;
     private Integer deviceNumber;
@@ -85,6 +88,11 @@ public class MCRequest {
         if (request.getWordValue() != null) {
 
             String word = Integer.toHexString(request.getWordValue());
+
+            if (request.getWordValue() < 0) {
+                word = word.substring(4);
+            }
+            Log.i("HEX", request.getWordValue() + " = " + word);
 
             for ( int i = 1; i<= 4-word.length(); i++ ) {
                 builder.append("0");

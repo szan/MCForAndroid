@@ -36,7 +36,7 @@
             <EditText
                     android:layout_width="102dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/wordValueText" android:numeric="integer"/>
+                    android:id="@+id/wordValueText" android:numeric="integer|signed"/>
             <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -74,6 +74,9 @@ public class MCResponse {
 
             String wordSubstring = responseString.substring(4);
             wordValue = Integer.parseInt(wordSubstring,16);
+            if (wordValue > MCRequest.MAX_INT) {
+                wordValue = 0 - (65536 - wordValue);
+            }
 
             return new MCResponse(commandCode,completionCode,wordValue,null);
         }
