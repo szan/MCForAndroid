@@ -5,8 +5,6 @@ import android.util.Log;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 28.08.13
- * Time: 23:37
  */
 public class MCResponse {
 

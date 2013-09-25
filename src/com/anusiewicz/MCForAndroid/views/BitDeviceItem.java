@@ -17,8 +17,6 @@ import java.util.HashMap;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 25.08.13
- * Time: 15:22
  */
 public class BitDeviceItem extends DeviceItem {
 

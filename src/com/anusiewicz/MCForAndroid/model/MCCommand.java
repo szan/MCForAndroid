@@ -1,11 +1,8 @@
 package com.anusiewicz.MCForAndroid.model;
 
-
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 24.08.13
- * Time: 23:53
  */
 public enum MCCommand {
     READ_BIT("00"),

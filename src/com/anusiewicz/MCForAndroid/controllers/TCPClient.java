@@ -3,8 +3,6 @@ package com.anusiewicz.MCForAndroid.controllers;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 27.06.13
- * Time: 01:50
  */
 import android.util.Log;
 import org.apache.http.util.EncodingUtils;
@@ -151,7 +149,7 @@ public class TCPClient {
 
     private void sendMessage(String msg) {
 
-        boolean testMode = true;
+        boolean testMode = false;
         if(testMode && out!=null){
             out.println(msg);
             out.flush();

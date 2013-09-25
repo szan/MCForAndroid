@@ -16,6 +16,5 @@ public class Constants {
     public static final String DEVICES_TAG = "devices";
     public static final String SCREEN_NAME_TAG = "screen_name";
 
-
     public static final String FILES_DIRECTORY = Environment.getExternalStorageDirectory().getPath() + "/Android/data/com.szymonanusiewicz.MCForAndroid/files/";
 }

@@ -6,8 +6,6 @@ import android.content.Context;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 28.08.13
- * Time: 20:43
  */
 public class MCForAndroidApplication extends Application {
 

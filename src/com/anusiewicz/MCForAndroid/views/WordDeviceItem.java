@@ -18,8 +18,6 @@ import java.util.HashMap;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 25.08.13
- * Time: 12:42
  */
 public class WordDeviceItem extends DeviceItem {
 

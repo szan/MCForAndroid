@@ -11,8 +11,6 @@ import java.util.ArrayList;
 /**
  * Created with IntelliJ IDEA.
  * User: Szymon Anusiewicz
- * Date: 28.08.13
- * Time: 20:42
  */
 public class ConnectionManager implements TCPClient.OnTCPConnectionLostListener {
 
